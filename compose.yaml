@@ -1,0 +1,68 @@
+name: chop-it
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-chopit}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-chopit}
+      POSTGRES_USER: ${POSTGRES_USER:-chopit}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-chopit} -d ${POSTGRES_DB:-chopit}"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - chop_it_data:/var/lib/postgresql/data
+
+  migrate:
+    build:
+      context: .
+      dockerfile: infra/docker/api.Dockerfile
+      target: runtime
+    command: ["sh", "-c", "alembic upgrade head && python -m app.scripts.seed_demo"]
+    environment:
+      APP_ENV: ${APP_ENV:-development}
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://chopit:chopit@db:5432/chopit}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    build:
+      context: .
+      dockerfile: infra/docker/api.Dockerfile
+      target: runtime
+    environment:
+      API_CORS_ORIGINS: ${API_CORS_ORIGINS:-http://localhost:3000}
+      APP_ENV: ${APP_ENV:-development}
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://chopit:chopit@db:5432/chopit}
+      PROJECT_NAME: ${PROJECT_NAME:-Chop It}
+      TRUSTED_HOSTS: ${TRUSTED_HOSTS:-localhost,127.0.0.1,api,web}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    ports:
+      - "8000:8000"
+
+  web:
+    build:
+      context: .
+      dockerfile: infra/docker/web.Dockerfile
+      target: runner
+    environment:
+      API_INTERNAL_URL: ${API_INTERNAL_URL:-http://api:8000/api/v1}
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+
+volumes:
+  chop_it_data:

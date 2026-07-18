@@ -1,0 +1,28 @@
+import { render, screen } from '@testing-library/react';
+
+import ChopItPage from './page';
+
+describe('ChopItPage', () => {
+  it('links the four core product flows', () => {
+    render(<ChopItPage />);
+
+    expect(
+      screen.getByRole('heading', { name: /Chop It!/ }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Recetas/ })).toHaveAttribute(
+      'href',
+      '/chop-it/recipes',
+    );
+    expect(screen.getByRole('link', { name: /Ingredientes/ })).toHaveAttribute(
+      'href',
+      '/chop-it/ingredients',
+    );
+    expect(screen.getByRole('link', { name: /Plan semanal/ })).toHaveAttribute(
+      'href',
+      '/chop-it/plans',
+    );
+    expect(
+      screen.getByRole('link', { name: /Lista de compra/ }),
+    ).toHaveAttribute('href', '/chop-it/shopping-lists');
+  });
+});
