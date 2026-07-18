@@ -34,13 +34,13 @@ export function PantryQuantityControl({
         <span className="grid size-8 place-items-center rounded-full border border-zinc-200 text-zinc-300 transition peer-checked:border-zinc-950 peer-checked:bg-zinc-950 peer-checked:text-white">
           ✓
         </span>
-        <span>Lo tengo</span>
+        <span>In my pantry</span>
       </label>
       <label className="grid gap-1 text-xs font-medium text-zinc-500">
-        <span>Cantidad</span>
+        <span>Quantity</span>
         <div className="relative">
           <input
-            aria-label="Cantidad"
+            aria-label="Quantity"
             className="h-10 w-full rounded-md border border-zinc-200 bg-white px-3 pr-9 text-sm font-semibold tabular-nums text-zinc-950 outline-none transition disabled:bg-zinc-50 disabled:text-zinc-300 focus:border-zinc-950 focus:ring-2 focus:ring-zinc-950/10"
             defaultValue={roundedQuantity}
             disabled={!checked}

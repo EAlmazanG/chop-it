@@ -201,7 +201,7 @@ def create_recipe(
             service.create_recipe(
                 title=request.title,
                 description=request.description,
-                image_url=request.image_url,
+                image_url=str(request.image_url) if request.image_url is not None else None,
                 prep_time_minutes=request.prep_time_minutes,
                 servings=request.servings,
                 oil_mode=request.oil_mode,
@@ -234,7 +234,7 @@ def update_recipe(
                 recipe_id,
                 title=request.title,
                 description=request.description,
-                image_url=request.image_url,
+                image_url=str(request.image_url) if request.image_url is not None else None,
                 prep_time_minutes=request.prep_time_minutes,
                 servings=request.servings,
                 oil_mode=request.oil_mode,

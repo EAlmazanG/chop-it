@@ -77,7 +77,7 @@ export function RecipeEditorModal({
 
   const formId = recipe ? `recipe-editor-${recipe.id}` : 'recipe-editor-create';
   const title =
-    mode === 'create' ? 'Añadir receta' : `Editar ${recipe?.title ?? 'receta'}`;
+    mode === 'create' ? 'Add recipe' : `Edit ${recipe?.title ?? 'recipe'}`;
 
   function addIngredient(ingredientId: string) {
     setSelectedIngredients((current) => [
@@ -110,14 +110,14 @@ export function RecipeEditorModal({
         <div className="flex items-start justify-between gap-4 border-b border-zinc-100 p-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">
-              Receta
+              Recipe
             </p>
             <h2 className="mt-1 text-xl font-semibold tracking-tight">
               {title}
             </h2>
           </div>
           <Link
-            aria-label="Cerrar"
+            aria-label="Close"
             className={modalCloseClassName}
             href={closeHref}
           >
@@ -150,25 +150,25 @@ export function RecipeEditorModal({
               />
             ))}
 
-            <Field label="Titulo">
+            <Field label="Title">
               <input
                 className={inputClassName}
                 defaultValue={recipe?.title ?? ''}
                 name="title"
-                placeholder="Pollo plancha"
+                placeholder="Grilled chicken"
                 required
               />
             </Field>
-            <Field label="Descripcion">
+            <Field label="Description">
               <textarea
                 className="min-h-32 w-full rounded-md border border-zinc-200 bg-white px-3 py-3 text-sm outline-none transition placeholder:text-zinc-400 focus:border-zinc-950 focus:ring-2 focus:ring-zinc-950/10"
                 defaultValue={recipe?.description ?? ''}
                 name="description"
-                placeholder="Pasos, notas y contexto de la receta"
+                placeholder="Steps, notes, and recipe context"
               />
             </Field>
             <div className="grid gap-3 sm:grid-cols-2">
-              <Field label="Minutos">
+              <Field label="Minutes">
                 <input
                   className={inputClassName}
                   defaultValue={recipe?.prepTimeMinutes ?? ''}
@@ -178,7 +178,7 @@ export function RecipeEditorModal({
                   type="number"
                 />
               </Field>
-              <Field label="Raciones">
+              <Field label="Servings">
                 <input
                   className={inputClassName}
                   defaultValue={recipe?.servings ?? ''}
@@ -189,16 +189,17 @@ export function RecipeEditorModal({
                 />
               </Field>
             </div>
-            <Field label="Imagen URL">
+            <Field label="Image URL">
               <input
                 className={inputClassName}
                 defaultValue={recipe?.imageUrl ?? ''}
                 name="imageUrl"
                 placeholder="https://..."
+                type="url"
               />
             </Field>
             <div className="grid gap-3 sm:grid-cols-2">
-              <Field label="Aceite">
+              <Field label="Oil">
                 <select
                   className={inputClassName}
                   name="oilMode"
@@ -207,9 +208,9 @@ export function RecipeEditorModal({
                   }
                   value={oilMode}
                 >
-                  <option value="none">Sin aceite</option>
+                  <option value="none">No oil</option>
                   <option value="spray">Spray</option>
-                  <option value="grams">Gramos</option>
+                  <option value="grams">Grams</option>
                 </select>
               </Field>
               {oilMode === 'spray' ? (
@@ -230,17 +231,17 @@ export function RecipeEditorModal({
                     type="number"
                   />
                   <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium leading-5 text-amber-900">
-                    Los sprays usan el ingrediente{' '}
+                    Sprays use the ingredient{' '}
                     <span className="font-semibold">
-                      {oilReference?.name ?? 'aceite'}
+                      {oilReference?.name ?? 'oil'}
                     </span>{' '}
-                    como referencia. Edita ese ingrediente para cambiar gramos
-                    por spray y macros.
+                    as their reference. Edit that ingredient to change grams
+                    per spray and macros.
                   </p>
                 </div>
               ) : null}
               {oilMode === 'grams' ? (
-                <Field label="Gramos aceite">
+                <Field label="Oil grams">
                   <input
                     className={inputClassName}
                     defaultValue={recipe?.oilGrams ?? ''}
@@ -256,9 +257,9 @@ export function RecipeEditorModal({
             <section className="rounded-lg border border-zinc-200 p-4">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-sm font-semibold">Ingredientes</p>
+                  <p className="text-sm font-semibold">Ingredients</p>
                   <p className="mt-1 text-xs text-zinc-500">
-                    Añade ingredientes desde el buscador y ajusta cantidades.
+                    Add ingredients from search and adjust their quantities.
                   </p>
                 </div>
                 <button
@@ -301,7 +302,7 @@ export function RecipeEditorModal({
                               <span className="rounded-full bg-zinc-100 px-2 py-0.5 font-semibold text-zinc-600">
                                 {categoryById.get(
                                   ingredient.secondaryCategoryId,
-                                ) ?? 'Sin etiqueta'}
+                                ) ?? 'No tag'}
                               </span>
                             </div>
                           ) : null}
@@ -334,7 +335,7 @@ export function RecipeEditorModal({
                           </p>
                         </div>
                         <button
-                          aria-label={`Quitar ${ingredient?.name ?? selectedIngredient.ingredientId}`}
+                          aria-label={`Remove ${ingredient?.name ?? selectedIngredient.ingredientId}`}
                           className="grid size-9 place-items-center justify-self-end rounded-full bg-red-600 text-lg font-semibold leading-none text-white transition hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
                           onClick={() =>
                             removeIngredient(selectedIngredient.ingredientId)
@@ -348,7 +349,7 @@ export function RecipeEditorModal({
                   })
                 ) : (
                   <p className="rounded-md border border-dashed border-zinc-200 p-6 text-center text-sm text-zinc-500">
-                    Sin ingredientes. Pulsa + para añadir el primero.
+                    No ingredients yet. Select + to add the first one.
                   </p>
                 )}
               </div>
@@ -357,10 +358,10 @@ export function RecipeEditorModal({
 
           <div className="flex flex-wrap items-center gap-2 border-t border-zinc-100 p-4">
             <button
-              aria-label={mode === 'create' ? 'Añadir receta' : 'Guardar'}
+              aria-label={mode === 'create' ? 'Add recipe' : 'Save'}
               className={saveIconButtonClassName}
               form={formId}
-              title={mode === 'create' ? 'Añadir receta' : 'Guardar'}
+              title={mode === 'create' ? 'Add recipe' : 'Save'}
             >
               <SaveIcon className="size-5" />
             </button>
@@ -368,9 +369,9 @@ export function RecipeEditorModal({
               <form action={archiveAction}>
                 <input name="id" type="hidden" value={recipe.id} />
                 <button
-                  aria-label="Archivar"
+                  aria-label="Archive"
                   className={archiveIconButtonClassName}
-                  title="Archivar"
+                  title="Archive"
                 >
                   <ArchiveIcon className="size-5" />
                 </button>
@@ -385,13 +386,13 @@ export function RecipeEditorModal({
           <section className="w-full max-w-xl rounded-lg border border-zinc-200 bg-white p-4 shadow-xl">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h3 className="text-lg font-semibold">Añadir ingrediente</h3>
+                <h3 className="text-lg font-semibold">Add ingredient</h3>
                 <p className="mt-1 text-sm text-zinc-500">
-                  Busca y selecciona un ingrediente.
+                  Search for and select an ingredient.
                 </p>
               </div>
               <button
-                aria-label="Cerrar"
+                aria-label="Close"
                 className={modalCloseClassName}
                 onClick={() => setIsIngredientPickerOpen(false)}
                 type="button"
@@ -402,7 +403,7 @@ export function RecipeEditorModal({
             <input
               className={`${inputClassName} mt-4`}
               onChange={(event) => setIngredientQuery(event.target.value)}
-              placeholder="Buscar ingrediente"
+              placeholder="Search ingredients"
               value={ingredientQuery}
             />
             <div className="mt-3 grid max-h-80 gap-2 overflow-auto">
@@ -422,7 +423,7 @@ export function RecipeEditorModal({
                 ))
               ) : (
                 <p className="rounded-md border border-dashed border-zinc-200 p-4 text-sm text-zinc-500">
-                  Sin resultados.
+                  No results.
                 </p>
               )}
             </div>
@@ -466,12 +467,12 @@ function ingredientNutrition(
 
 function macroTagLabel(tag: ChopItIngredient['primaryMacroTag']): string {
   if (tag === 'protein') {
-    return 'Proteina';
+    return 'Protein';
   }
   if (tag === 'fat') {
-    return 'Grasa';
+    return 'Fat';
   }
-  return 'Hidrato';
+  return 'Carbs';
 }
 
 function tagPillClassName(tag: ChopItIngredient['primaryMacroTag']): string {

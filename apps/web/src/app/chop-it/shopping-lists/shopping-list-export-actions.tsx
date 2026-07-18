@@ -24,19 +24,19 @@ export function ShoppingListExportActions({
   return (
     <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
       <button
-        aria-label="Copiar lista"
+        aria-label="Copy list"
         className="grid size-10 place-items-center rounded-full border border-zinc-200 text-zinc-600 transition hover:border-zinc-950 hover:text-zinc-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2"
         onClick={copyList}
-        title="Copiar lista"
+        title="Copy list"
         type="button"
       >
         <CopyIcon className="size-4" />
       </button>
       <button
-        aria-label="Compartir lista"
+        aria-label="Share list"
         className="grid size-10 place-items-center rounded-full border border-zinc-200 text-zinc-600 transition hover:border-zinc-950 hover:text-zinc-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2"
         onClick={shareList}
-        title="Compartir lista"
+        title="Share list"
         type="button"
       >
         <ShareIcon className="size-4" />

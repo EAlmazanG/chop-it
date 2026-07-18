@@ -19,7 +19,7 @@ describe('ChopItIngredientsPage', () => {
       .mockResolvedValue([
         {
           id: 'cat-1',
-          name: 'Proteínas',
+          name: 'Proteins',
           createdAt: '2026-01-01',
           updatedAt: '2026-01-01',
         },
@@ -43,7 +43,7 @@ describe('ChopItIngredientsPage', () => {
     render(await ChopItIngredientsPage({}));
 
     expect(
-      screen.getByRole('heading', { name: 'Ingredientes' }),
+      screen.getByRole('heading', { name: 'Ingredients' }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole('heading', { name: 'Pechuga de pollo' }),

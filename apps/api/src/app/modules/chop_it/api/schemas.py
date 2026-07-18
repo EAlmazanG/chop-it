@@ -1,8 +1,33 @@
 from __future__ import annotations
 
 from datetime import date, datetime
+from typing import Annotated, Literal, Self
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import (
+    AnyHttpUrl,
+    BaseModel,
+    ConfigDict,
+    Field,
+    StringConstraints,
+    model_validator,
+)
+
+CategoryName = Annotated[
+    str,
+    StringConstraints(strip_whitespace=True, min_length=1, max_length=120),
+]
+EntityName = Annotated[
+    str,
+    StringConstraints(strip_whitespace=True, min_length=1, max_length=255),
+]
+Description = Annotated[str, StringConstraints(strip_whitespace=True, max_length=4000)]
+Identifier = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=36)]
+MacroTag = Literal["protein", "fat", "carb"]
+IngredientUnit = Literal["g", "ml"]
+MealSlot = Literal["breakfast", "lunch", "dinner"]
+OilMode = Literal["none", "spray", "grams"]
+NonNegativeFloat = Annotated[float, Field(ge=0, allow_inf_nan=False)]
+PositiveFloat = Annotated[float, Field(gt=0, allow_inf_nan=False)]
 
 
 class StrictRequest(BaseModel):
@@ -10,11 +35,11 @@ class StrictRequest(BaseModel):
 
 
 class IngredientCategoryCreateRequest(StrictRequest):
-    name: str
+    name: CategoryName
 
 
 class IngredientCategoryUpdateRequest(StrictRequest):
-    name: str
+    name: CategoryName
 
 
 class IngredientCategoryResponse(BaseModel):
@@ -25,26 +50,26 @@ class IngredientCategoryResponse(BaseModel):
 
 
 class IngredientCreateRequest(StrictRequest):
-    name: str
-    primary_macro_tag: str = Field(validation_alias="primaryMacroTag")
-    secondary_category_id: str = Field(validation_alias="secondaryCategoryId")
-    unit: str
-    kcal_per_100: float = Field(validation_alias="kcalPer100")
-    protein_per_100: float = Field(validation_alias="proteinPer100")
-    fat_per_100: float = Field(validation_alias="fatPer100")
-    carbs_per_100: float = Field(validation_alias="carbsPer100")
+    name: EntityName
+    primary_macro_tag: MacroTag = Field(validation_alias="primaryMacroTag")
+    secondary_category_id: Identifier = Field(validation_alias="secondaryCategoryId")
+    unit: IngredientUnit
+    kcal_per_100: NonNegativeFloat = Field(validation_alias="kcalPer100")
+    protein_per_100: NonNegativeFloat = Field(validation_alias="proteinPer100")
+    fat_per_100: NonNegativeFloat = Field(validation_alias="fatPer100")
+    carbs_per_100: NonNegativeFloat = Field(validation_alias="carbsPer100")
     grams_per_spray: float | None = Field(default=None, gt=0, validation_alias="gramsPerSpray")
 
 
 class IngredientUpdateRequest(StrictRequest):
-    name: str
-    primary_macro_tag: str = Field(validation_alias="primaryMacroTag")
-    secondary_category_id: str = Field(validation_alias="secondaryCategoryId")
-    unit: str
-    kcal_per_100: float = Field(validation_alias="kcalPer100")
-    protein_per_100: float = Field(validation_alias="proteinPer100")
-    fat_per_100: float = Field(validation_alias="fatPer100")
-    carbs_per_100: float = Field(validation_alias="carbsPer100")
+    name: EntityName
+    primary_macro_tag: MacroTag = Field(validation_alias="primaryMacroTag")
+    secondary_category_id: Identifier = Field(validation_alias="secondaryCategoryId")
+    unit: IngredientUnit
+    kcal_per_100: NonNegativeFloat = Field(validation_alias="kcalPer100")
+    protein_per_100: NonNegativeFloat = Field(validation_alias="proteinPer100")
+    fat_per_100: NonNegativeFloat = Field(validation_alias="fatPer100")
+    carbs_per_100: NonNegativeFloat = Field(validation_alias="carbsPer100")
     grams_per_spray: float | None = Field(default=None, gt=0, validation_alias="gramsPerSpray")
 
 
@@ -65,8 +90,8 @@ class IngredientResponse(BaseModel):
 
 
 class RecipeIngredientRequest(StrictRequest):
-    ingredient_id: str = Field(validation_alias="ingredientId")
-    quantity: float
+    ingredient_id: Identifier = Field(validation_alias="ingredientId")
+    quantity: PositiveFloat
 
 
 class RecipeIngredientResponse(BaseModel):
@@ -75,15 +100,17 @@ class RecipeIngredientResponse(BaseModel):
 
 
 class RecipeCreateRequest(StrictRequest):
-    title: str
-    description: str
-    image_url: str | None = Field(validation_alias="imageUrl")
-    prep_time_minutes: int = Field(validation_alias="prepTimeMinutes")
-    servings: int
-    oil_mode: str = Field(validation_alias="oilMode")
-    oil_sprays: int | None = Field(validation_alias="oilSprays")
-    oil_grams: float | None = Field(validation_alias="oilGrams")
-    ingredients: list[RecipeIngredientRequest]
+    title: EntityName
+    description: Description
+    image_url: Annotated[AnyHttpUrl, Field(max_length=1000)] | None = Field(
+        validation_alias="imageUrl"
+    )
+    prep_time_minutes: int = Field(ge=0, le=1440, validation_alias="prepTimeMinutes")
+    servings: int = Field(gt=0, le=1000)
+    oil_mode: OilMode = Field(validation_alias="oilMode")
+    oil_sprays: int | None = Field(default=None, ge=1, le=5, validation_alias="oilSprays")
+    oil_grams: NonNegativeFloat | None = Field(default=None, validation_alias="oilGrams")
+    ingredients: list[RecipeIngredientRequest] = Field(max_length=100)
 
 
 class RecipeUpdateRequest(RecipeCreateRequest):
@@ -120,9 +147,9 @@ class RecipeResponse(BaseModel):
 
 class MealPlanItemCreateRequest(StrictRequest):
     meal_date: date = Field(validation_alias="mealDate")
-    meal_slot: str = Field(validation_alias="mealSlot")
-    recipe_id: str = Field(validation_alias="recipeId")
-    servings: float
+    meal_slot: MealSlot = Field(validation_alias="mealSlot")
+    recipe_id: Identifier = Field(validation_alias="recipeId")
+    servings: PositiveFloat = Field(le=100)
 
 
 class MealPlanItemResponse(BaseModel):
@@ -165,35 +192,45 @@ class MealPlanWeekResponse(BaseModel):
 
 
 class ShoppingListPantryItemRequest(StrictRequest):
-    ingredient_id: str = Field(validation_alias="ingredientId")
-    quantity: float
+    ingredient_id: Identifier = Field(validation_alias="ingredientId")
+    quantity: NonNegativeFloat
 
 
 class ShoppingListExcludedPlanItemRequest(StrictRequest):
-    plan_item_id: str = Field(validation_alias="planItemId")
-    servings: float = Field(gt=0)
+    plan_item_id: Identifier = Field(validation_alias="planItemId")
+    servings: PositiveFloat = Field(le=100)
 
 
 class ShoppingListGenerateRequest(StrictRequest):
-    title: str
+    title: EntityName
     start_date: date = Field(validation_alias="startDate")
     end_date: date = Field(validation_alias="endDate")
     excluded_plan_items: list[ShoppingListExcludedPlanItemRequest] = Field(
         default_factory=list,
+        max_length=500,
         validation_alias="excludedPlanItems",
     )
-    excluded_plan_item_ids: list[str] = Field(
+    excluded_plan_item_ids: list[Identifier] = Field(
         default_factory=list,
+        max_length=500,
         validation_alias="excludedPlanItemIds",
     )
-    excluded_recipe_ids: list[str] = Field(
+    excluded_recipe_ids: list[Identifier] = Field(
         default_factory=list,
+        max_length=500,
         validation_alias="excludedRecipeIds",
     )
     pantry_items: list[ShoppingListPantryItemRequest] = Field(
         default_factory=list,
+        max_length=500,
         validation_alias="pantryItems",
     )
+
+    @model_validator(mode="after")
+    def validate_date_range(self) -> Self:
+        if self.end_date < self.start_date:
+            raise ValueError("End date must be on or after start date")
+        return self
 
 
 class ShoppingListItemSourceDetailResponse(BaseModel):

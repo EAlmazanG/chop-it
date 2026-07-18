@@ -52,9 +52,9 @@ export function MacroCategorySelect({
       style={macroSelectStyle(value)}
       value={value}
     >
-      <option value="protein">Proteina</option>
-      <option value="fat">Grasa</option>
-      <option value="carb">Hidrato</option>
+      <option value="protein">Protein</option>
+      <option value="fat">Fat</option>
+      <option value="carb">Carbs</option>
     </select>
   );
 }

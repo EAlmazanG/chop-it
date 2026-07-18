@@ -9,20 +9,20 @@ describe('ChopItPage', () => {
     expect(
       screen.getByRole('heading', { name: /Chop It!/ }),
     ).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Recetas/ })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /Recipes/ })).toHaveAttribute(
       'href',
       '/chop-it/recipes',
     );
-    expect(screen.getByRole('link', { name: /Ingredientes/ })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /Ingredients/ })).toHaveAttribute(
       'href',
       '/chop-it/ingredients',
     );
-    expect(screen.getByRole('link', { name: /Plan semanal/ })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /Weekly plan/ })).toHaveAttribute(
       'href',
       '/chop-it/plans',
     );
     expect(
-      screen.getByRole('link', { name: /Lista de compra/ }),
+      screen.getByRole('link', { name: /Shopping list/ }),
     ).toHaveAttribute('href', '/chop-it/shopping-lists');
   });
 });

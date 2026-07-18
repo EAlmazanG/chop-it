@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 
 import { AppHeader } from '@/components/app-header';
 import { CheckIcon, TrashIcon } from '@/components/action-icons';
-import { ChopItIcon } from '@/components/chop-it-icon';
+import { ChopItSectionHeader } from '@/components/chop-it-section-header';
 import {
   completeChopItShoppingList,
   deleteChopItShoppingList,
@@ -50,10 +50,10 @@ const sections: Array<{
   label: string;
   defaultOpen: boolean;
 }> = [
-  { id: 'recipe_excluded', label: 'Recetas quitadas', defaultOpen: true },
-  { id: 'pantry', label: 'En despensa', defaultOpen: true },
-  { id: 'missing', label: 'Por comprar', defaultOpen: true },
-  { id: 'bought', label: 'Comprados', defaultOpen: false },
+  { id: 'recipe_excluded', label: 'Excluded recipes', defaultOpen: true },
+  { id: 'pantry', label: 'In the pantry', defaultOpen: true },
+  { id: 'missing', label: 'To buy', defaultOpen: true },
+  { id: 'bought', label: 'Purchased', defaultOpen: false },
 ];
 
 async function completeShoppingListAction(formData: FormData) {
@@ -132,10 +132,10 @@ export default async function ChopItShoppingListsPage({
   const detailList = selectedList ?? currentList;
   const detailTitle = selectedList
     ? selectedList.status === 'current'
-      ? 'Lista actual'
-      : 'Lista anterior'
+      ? 'Current list'
+      : 'Previous list'
     : currentList
-      ? 'Lista actual'
+      ? 'Current list'
       : null;
 
   return (
@@ -145,27 +145,17 @@ export default async function ChopItShoppingListsPage({
         sectionHref={chopItHomeHref(actingUserId)}
       />
       <section className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
-        <div className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-zinc-200 pb-6">
-          <div>
-            <div className="flex items-center gap-5">
-              <ChopItIcon
-                className="size-24 shrink-0 rounded-[1.75rem] object-cover sm:size-28"
-                icon="shoppingList"
-                priority
-              />
-              <h1 className="text-3xl font-semibold tracking-tight">
-                Lista de la compra
-              </h1>
+        <ChopItSectionHeader
+          aside={
+            <div className="grid grid-cols-2 gap-2">
+              <MetricCard label="missing" value={missingCount} />
+              <MetricCard label="purchased" value={boughtCount} />
             </div>
-            <p className="mt-2 text-sm leading-6 text-zinc-500">
-              Revisa la compra activa, lo que ya tienes y las listas archivadas.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <MetricCard label="faltantes" value={missingCount} />
-            <MetricCard label="comprados" value={boughtCount} />
-          </div>
-        </div>
+          }
+          description="Review the active list, pantry items, and archived lists."
+          icon="shoppingList"
+          title="Shopping list"
+        />
 
         <div className="mt-6">
           {detailList ? (
@@ -176,7 +166,7 @@ export default async function ChopItShoppingListsPage({
               shoppingList={detailList}
               sort={sort}
               sortDir={sortDir}
-              title={detailTitle ?? 'Lista'}
+              title={detailTitle ?? 'List'}
             />
           ) : (
             <EmptyState actingUserId={actingUserId} />
@@ -212,20 +202,20 @@ function ShoppingListStatusBadge({
   if (shoppingList.status === 'current') {
     return (
       <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
-        Activa
+        Active
       </span>
     );
   }
   if (shoppingList.completedAt) {
     return (
       <span className="rounded-full bg-zinc-950 px-2.5 py-1 text-xs font-semibold text-white">
-        Completada
+        Completed
       </span>
     );
   }
   return (
     <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700">
-      Sin completar
+      Incomplete
     </span>
   );
 }
@@ -233,7 +223,7 @@ function ShoppingListStatusBadge({
 function shoppingListExportText(shoppingList: ChopItShoppingList): string {
   const lines = [
     shoppingList.title,
-    `${shoppingList.startDate} a ${shoppingList.endDate}`,
+    `${shoppingList.startDate} to ${shoppingList.endDate}`,
     '',
   ];
   for (const section of sections) {
@@ -294,11 +284,11 @@ function ShoppingListDetail({
           </div>
           <h2 className="mt-2 text-xl font-semibold">{shoppingList.title}</h2>
           <p className="mt-1 text-sm text-zinc-500">
-            {shoppingList.startDate} a {shoppingList.endDate}
+            {shoppingList.startDate} to {shoppingList.endDate}
           </p>
           {isCompleted ? (
             <p className="mt-2 text-xs font-semibold uppercase tracking-[0.12em] text-zinc-400">
-              Cerrada el {shoppingList.completedAt?.slice(0, 10)}
+              Closed on {shoppingList.completedAt?.slice(0, 10)}
             </p>
           ) : null}
         </div>
@@ -316,9 +306,9 @@ function ShoppingListDetail({
               />
               <input name="id" type="hidden" value={shoppingList.id} />
               <button
-                aria-label="Completar"
+                aria-label="Complete"
                 className="grid size-10 place-items-center rounded-full bg-zinc-950 text-white transition hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2"
-                title="Marcar lista como completa"
+                title="Mark list as complete"
               >
                 <CheckIcon className="size-4" />
               </button>
@@ -332,9 +322,9 @@ function ShoppingListDetail({
             />
             <input name="id" type="hidden" value={shoppingList.id} />
             <button
-              aria-label="Borrar"
+              aria-label="Delete"
               className="grid size-10 place-items-center rounded-full border border-red-200 text-red-700 transition hover:border-red-500 hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
-              title="Eliminar lista"
+              title="Delete list"
             >
               <TrashIcon className="size-4" />
             </button>
@@ -381,11 +371,11 @@ function SortControls({
 }) {
   return (
     <div className="mt-4 flex flex-wrap items-center gap-1.5 text-[0.58rem] font-semibold uppercase tracking-[0.1em] text-zinc-500 sm:gap-2 sm:text-xs sm:tracking-[0.12em]">
-      <span className="mr-0.5 shrink-0 tracking-[0.14em] sm:mr-1">Orden</span>
+      <span className="mr-0.5 shrink-0 tracking-[0.14em] sm:mr-1">Sort</span>
       <SortLink
         actingUserId={actingUserId}
         field="name"
-        label="Nombre"
+        label="Name"
         listId={listId}
         sort={sort}
         sortDir={sortDir}
@@ -393,7 +383,7 @@ function SortControls({
       <SortLink
         actingUserId={actingUserId}
         field="category"
-        label="Categoría"
+        label="Category"
         listId={listId}
         sort={sort}
         sortDir={sortDir}
@@ -401,7 +391,7 @@ function SortControls({
       <SortLink
         actingUserId={actingUserId}
         field="tag"
-        label="Etiqueta"
+        label="Tag"
         listId={listId}
         sort={sort}
         sortDir={sortDir}
@@ -471,7 +461,7 @@ function ShoppingSection({
             />
           ))
         ) : (
-          <p className="text-sm text-zinc-500">Sin ingredientes</p>
+          <p className="text-sm text-zinc-500">No ingredients</p>
         )}
       </div>
     </details>
@@ -526,8 +516,8 @@ function ShoppingItem({
                 {round(item.nutrition.kcal)} kcal
               </span>
               <span className="shrink-0 whitespace-nowrap tabular-nums">
-                {round(item.nutrition.protein)}P {round(item.nutrition.fat)}G{' '}
-                {round(item.nutrition.carbs)}H
+                {round(item.nutrition.protein)}P {round(item.nutrition.fat)}F{' '}
+                {round(item.nutrition.carbs)}C
               </span>
             </span>
           </summary>
@@ -535,8 +525,8 @@ function ShoppingItem({
             className={`mt-2 text-[0.62rem] font-semibold uppercase tracking-[0.12em] sm:text-xs ${mutedTextClassName}`}
           >
             {item.sourceDetails.length > 0
-              ? 'Detalle por receta'
-              : 'Sin recetas'}
+              ? 'Recipe breakdown'
+              : 'No recipes'}
           </p>
           {item.sourceDetails.length > 0 ? (
             <div className="mt-1.5 grid gap-1">
@@ -565,7 +555,7 @@ function ShoppingItem({
           ) : null}
           {item.pantryQuantity > 0 ? (
             <p className={`mt-1 text-xs ${mutedTextClassName}`}>
-              Necesario {round(item.requiredQuantity)} {item.unit}, despensa{' '}
+              Required {round(item.requiredQuantity)} {item.unit}, pantry{' '}
               {round(item.pantryQuantity)} {item.unit}
             </p>
           ) : null}
@@ -596,19 +586,19 @@ function ShoppingItem({
             <span> · {round(item.nutrition.protein)}P</span>
           </p>
           <p className="truncate">
-            {round(item.nutrition.fat)}G · {round(item.nutrition.carbs)}H
+            {round(item.nutrition.fat)}F · {round(item.nutrition.carbs)}C
           </p>
         </div>
         {isReadOnly ? (
           <span
             aria-label={`${item.ingredientName} ${
-              isProtectedResolvedItem && !readOnly ? 'protegido' : 'completado'
+              isProtectedResolvedItem && !readOnly ? 'protected' : 'completed'
             }`}
             className="grid size-7 justify-self-end place-items-center rounded-full bg-zinc-100 text-xs font-semibold text-zinc-400 sm:size-8 sm:text-sm"
             title={
               isProtectedResolvedItem && !readOnly
-                ? 'Resuelto por despensa o receta quitada'
-                : 'Lista completada'
+                ? 'Resolved by pantry stock or an excluded recipe'
+                : 'Completed list'
             }
           >
             ✓
@@ -626,13 +616,13 @@ function ShoppingItem({
             <input name="id" type="hidden" value={item.id} />
             <input name="isChecked" type="hidden" value={nextChecked} />
             <button
-              aria-label={`${item.isChecked ? 'Desticar' : 'Tickar'} ${item.ingredientName}`}
+              aria-label={`${item.isChecked ? 'Uncheck' : 'Check'} ${item.ingredientName}`}
               className={
                 item.isChecked
                   ? checkedToggleClassName
                   : 'grid size-7 place-items-center rounded-full border border-zinc-200 text-xs text-zinc-400 transition hover:border-zinc-950 hover:text-zinc-950 sm:size-8 sm:text-sm'
               }
-              title={item.isChecked ? 'Desticar' : 'Tickar'}
+              title={item.isChecked ? 'Uncheck' : 'Check'}
             >
               ✓
             </button>
@@ -658,7 +648,7 @@ function ArchivedLists({
 
   return (
     <section className="mt-8 border-t border-zinc-200 pt-6">
-      <h2 className="text-lg font-semibold">Archivadas</h2>
+      <h2 className="text-lg font-semibold">Archived</h2>
       <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {shoppingLists.map((shoppingList) => (
           <Link
@@ -677,7 +667,7 @@ function ArchivedLists({
                   <ShoppingListStatusBadge shoppingList={shoppingList} />
                 </div>
                 <p className="mt-1 text-xs text-zinc-500">
-                  {shoppingList.startDate} a {shoppingList.endDate}
+                  {shoppingList.startDate} to {shoppingList.endDate}
                 </p>
                 <p className="mt-2 text-xs text-zinc-500">
                   {
@@ -685,13 +675,13 @@ function ArchivedLists({
                       (item) => item.section === 'missing',
                     ).length
                   }{' '}
-                  faltantes ·{' '}
+                  missing ·{' '}
                   {
                     shoppingList.items.filter(
                       (item) => item.section === 'bought',
                     ).length
                   }{' '}
-                  comprados
+                  purchased
                 </p>
               </div>
               <span className="grid size-8 shrink-0 place-items-center rounded-full border border-zinc-200 text-sm text-zinc-500 transition group-hover:border-zinc-950 group-hover:text-zinc-950">
@@ -708,15 +698,15 @@ function ArchivedLists({
 function EmptyState({ actingUserId }: { actingUserId?: string }) {
   return (
     <div className="rounded-lg border border-dashed border-zinc-300 px-5 py-12 text-center">
-      <p className="text-sm font-semibold">Sin lista actual</p>
+      <p className="text-sm font-semibold">No current list</p>
       <p className="mt-2 text-sm text-zinc-500">
-        Genera una lista desde las recetas asignadas en el plan.
+        Generate a list from the recipes assigned in your meal plan.
       </p>
       <Link
         className={`mt-4 ${secondaryButtonClassName}`}
         href={plansHref(actingUserId)}
       >
-        Ir a planes
+        Go to meal plans
       </Link>
     </div>
   );
@@ -744,11 +734,11 @@ function enrichShoppingItems(
     return {
       ...item,
       categoryName: ingredient
-        ? (categoryById.get(ingredient.secondaryCategoryId) ?? 'Sin etiqueta')
-        : 'Sin etiqueta',
+        ? (categoryById.get(ingredient.secondaryCategoryId) ?? 'No tag')
+        : 'No tag',
       macroLabel: ingredient
         ? macroTagLabel(ingredient.primaryMacroTag)
-        : 'Sin categoría',
+        : 'No category',
       nutrition: ingredient
         ? {
             carbs: (ingredient.carbsPer100 * quantity) / 100,
@@ -868,30 +858,30 @@ function nullableString(value: FormDataEntryValue | null): string | null {
 
 function macroTagLabel(tag: ChopItIngredient['primaryMacroTag']): string {
   if (tag === 'protein') {
-    return 'Proteina';
+    return 'Protein';
   }
   if (tag === 'fat') {
-    return 'Grasa';
+    return 'Fat';
   }
-  return 'Hidrato';
+  return 'Carbs';
 }
 
 function weekdayName(date: string): string {
   const names = [
-    'Domingo',
-    'Lunes',
-    'Martes',
-    'Miercoles',
-    'Jueves',
-    'Viernes',
-    'Sabado',
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
   ];
   const day = new Date(`${date}T00:00:00Z`).getUTCDay();
   return names[day] ?? date;
 }
 
 function formatShortDate(date: string): string {
-  return new Intl.DateTimeFormat('es-ES', {
+  return new Intl.DateTimeFormat('en-GB', {
     day: '2-digit',
     month: 'short',
   }).format(new Date(`${date}T00:00:00Z`));
@@ -899,19 +889,19 @@ function formatShortDate(date: string): string {
 
 function mealSlotLabel(slotId: string): string {
   if (slotId === 'breakfast') {
-    return 'Desayuno';
+    return 'Breakfast';
   }
   if (slotId === 'snack_morning') {
-    return 'Almuerzo';
+    return 'Morning snack';
   }
   if (slotId === 'lunch') {
-    return 'Comida';
+    return 'Lunch';
   }
   if (slotId === 'snack_afternoon') {
-    return 'Merienda';
+    return 'Afternoon snack';
   }
   if (slotId === 'dinner') {
-    return 'Cena';
+    return 'Dinner';
   }
   return slotId;
 }

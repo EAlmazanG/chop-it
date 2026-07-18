@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 
 import { CloseIcon, ShoppingListIcon } from '@/components/action-icons';
 import { AppHeader } from '@/components/app-header';
-import { ChopItIcon } from '@/components/chop-it-icon';
+import { ChopItSectionHeader } from '@/components/chop-it-section-header';
 import {
   createChopItMealPlanItem,
   deleteChopItMealPlanItem,
@@ -41,11 +41,11 @@ type PlansPageProps = {
 };
 
 const mealSlots = [
-  { id: 'breakfast', label: 'Desayuno' },
-  { id: 'snack_morning', label: 'Almuerzo' },
-  { id: 'lunch', label: 'Comida' },
-  { id: 'snack_afternoon', label: 'Merienda' },
-  { id: 'dinner', label: 'Cena' },
+  { id: 'breakfast', label: 'Breakfast' },
+  { id: 'snack_morning', label: 'Morning snack' },
+  { id: 'lunch', label: 'Lunch' },
+  { id: 'snack_afternoon', label: 'Afternoon snack' },
+  { id: 'dinner', label: 'Dinner' },
 ];
 
 async function createPlanItemAction(formData: FormData) {
@@ -183,35 +183,24 @@ export default async function ChopItPlansPage({
         sectionHref={chopItHomeHref(actingUserId)}
       />
       <section className="mx-auto max-w-[96rem] px-5 py-8 sm:px-8">
-        <div className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-zinc-200 pb-6">
-          <div>
-            <div className="flex items-center gap-5">
-              <ChopItIcon
-                className="size-24 shrink-0 rounded-[1.75rem] object-cover sm:size-28"
-                icon="plans"
-                priority
-              />
-              <h1 className="text-3xl font-semibold tracking-tight">
-                Planes de comida
-              </h1>
+        <ChopItSectionHeader
+          aside={
+            <div className="grid gap-3">
+              <WeekTotal plan={plan} />
+              <WeekAverage plan={plan} />
             </div>
-            <p className="mt-2 text-sm leading-6 text-zinc-500">
-              Semana actual, comidas por dia y totales nutricionales por
-              usuario.
-            </p>
-          </div>
-          <div className="grid gap-3">
-            <WeekTotal plan={plan} />
-            <WeekAverage plan={plan} />
-          </div>
-        </div>
+          }
+          description="Current week, meals by day, and nutrition totals."
+          icon="plans"
+          title="Weekly plan"
+        />
 
         <PlanToolbar actingUserId={actingUserId} weekStart={weekStart} />
         <Link
-          aria-label="Generar compra"
+          aria-label="Generate shopping list"
           className="fixed bottom-6 right-6 z-30 grid size-14 place-items-center rounded-full bg-zinc-950 text-white shadow-xl shadow-zinc-950/20 transition hover:scale-105 hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 sm:bottom-8 sm:right-8"
           href={shoppingWizardHref({ actingUserId, step: 'days', weekStart })}
-          title="Generar compra"
+          title="Generate shopping list"
         >
           <ShoppingListIcon className="size-6" />
         </Link>
@@ -269,28 +258,28 @@ function PlanToolbar({
     <div className="rounded-lg border border-zinc-200 bg-zinc-50/70 p-3">
       <div className="grid gap-3 sm:grid-cols-[auto_1fr_auto] sm:items-center">
         <Link
-          aria-label="Semana anterior"
+          aria-label="Previous week"
           className={weekArrowClassName}
           href={planHref(previousWeek, actingUserId)}
           scroll={false}
         >
-          ←<span className="hidden sm:inline">Anterior</span>
+          ←<span className="hidden sm:inline">Previous</span>
         </Link>
         <div className="rounded-md border border-zinc-200 bg-white px-4 py-3 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">
-            Semana
+            Week
           </p>
           <p className="mt-1 text-lg font-semibold tracking-tight text-zinc-950">
             {formatWeekRange(weekStart)}
           </p>
         </div>
         <Link
-          aria-label="Semana siguiente"
+          aria-label="Next week"
           className={weekArrowClassName}
           href={planHref(nextWeek, actingUserId)}
           scroll={false}
         >
-          <span className="hidden sm:inline">Siguiente</span>→
+          <span className="hidden sm:inline">Next</span>→
         </Link>
       </div>
     </div>
@@ -335,8 +324,8 @@ function DayColumn({
         <div className="mt-3 grid grid-cols-4 gap-1.5">
           <DayMetric label="Kcal" value={round(day.totalKcal)} />
           <DayMetric label="P" value={round(day.totalProtein)} />
-          <DayMetric label="G" value={round(day.totalFat)} />
-          <DayMetric label="H" value={round(day.totalCarbs)} />
+          <DayMetric label="F" value={round(day.totalFat)} />
+          <DayMetric label="C" value={round(day.totalCarbs)} />
         </div>
       </div>
 
@@ -347,7 +336,7 @@ function DayColumn({
           ))
         ) : (
           <div className="grid min-h-32 place-items-center rounded-md border border-dashed border-zinc-200 bg-zinc-50 px-4 text-center text-sm text-zinc-500">
-            Sin comidas asignadas
+            No meals assigned
           </div>
         )}
       </div>
@@ -356,7 +345,7 @@ function DayColumn({
         className={addButtonClassName}
         href={addMealHref({ weekStart, day: day.date, actingUserId })}
       >
-        + Añadir comida
+        + Add meal
       </Link>
     </section>
   );
@@ -404,10 +393,10 @@ function MealItem({
           </div>
           <p className="mt-1 text-xs text-zinc-500">
             {round(item.kcal)} kcal · {round(item.protein)}P · {round(item.fat)}
-            G · {round(item.carbs)}H
+            F · {round(item.carbs)}C
           </p>
         </div>
-        <button className="text-xs font-semibold text-red-700">Quitar</button>
+        <button className="text-xs font-semibold text-red-700">Remove</button>
       </div>
     </form>
   );
@@ -437,11 +426,11 @@ function MealPickerModal({
               {weekdayName(day)} · {formatShortDate(day)}
             </p>
             <h2 className="mt-1 text-xl font-semibold tracking-tight">
-              Añadir comida
+              Add meal
             </h2>
           </div>
           <Link
-            aria-label="Cerrar"
+            aria-label="Close"
             className={modalCloseClassName}
             href={planHref(weekStart, actingUserId)}
           >
@@ -451,7 +440,7 @@ function MealPickerModal({
 
         <div className="grid gap-4 p-4">
           <div>
-            <p className="text-sm font-semibold">Tipo de comida</p>
+            <p className="text-sm font-semibold">Meal type</p>
             <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-5">
               {mealSlots.map((slot) => (
                 <Link
@@ -476,8 +465,8 @@ function MealPickerModal({
 
           <div>
             <div className="flex items-center justify-between gap-3">
-              <p className="text-sm font-semibold">Recetas</p>
-              <p className="text-xs text-zinc-500">Ordenadas por nombre</p>
+              <p className="text-sm font-semibold">Recipes</p>
+              <p className="text-xs text-zinc-500">Sorted by name</p>
             </div>
             <div className="mt-2 grid max-h-[44vh] gap-2 overflow-auto pr-1">
               {recipes.length > 0 ? (
@@ -505,13 +494,13 @@ function MealPickerModal({
                         {recipe.title}
                       </p>
                       <p className="mt-1 text-xs leading-5 text-zinc-500">
-                        {round(recipe.perServingKcal)} kcal/racion ·{' '}
+                        {round(recipe.perServingKcal)} kcal/serving ·{' '}
                         {round(recipe.perServingProtein)}P ·{' '}
-                        {round(recipe.perServingFat)}G ·{' '}
-                        {round(recipe.perServingCarbs)}H
+                        {round(recipe.perServingFat)}F ·{' '}
+                        {round(recipe.perServingCarbs)}C
                       </p>
                     </div>
-                    <Field label="Raciones">
+                    <Field label="Servings">
                       <input
                         className={inputClassName}
                         defaultValue="1"
@@ -521,12 +510,12 @@ function MealPickerModal({
                         type="number"
                       />
                     </Field>
-                    <button className={primaryButtonClassName}>Añadir</button>
+                    <button className={primaryButtonClassName}>Add</button>
                   </form>
                 ))
               ) : (
                 <p className="rounded-md border border-dashed border-zinc-200 p-4 text-sm text-zinc-500">
-                  No hay recetas disponibles.
+                  No recipes available.
                 </p>
               )}
             </div>
@@ -608,18 +597,18 @@ function ShoppingWizardModal({
         <div className="flex items-start justify-between gap-4 border-b border-zinc-100 p-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">
-              Lista de la compra
+              Shopping list
             </p>
             <h2 className="mt-1 text-xl font-semibold tracking-tight">
               {step === 'days'
-                ? 'Seleccionar dias'
+                ? 'Select days'
                 : step === 'recipes'
-                  ? 'Quitar recetas'
-                  : 'Ajustar despensa'}
+                  ? 'Exclude recipes'
+                  : 'Adjust pantry'}
             </h2>
           </div>
           <Link
-            aria-label="Cerrar"
+            aria-label="Close"
             className={modalCloseClassName}
             href={planHref(weekStart, actingUserId)}
           >
@@ -738,8 +727,8 @@ function ShoppingRecipesStep({
                             }`}
                           >
                             {excludedServings > 0
-                              ? `No contar ${round(excludedServings)} de ${round(item.servings)} raciones`
-                              : `Contar ${round(item.servings)} de ${round(item.servings)} raciones`}
+                              ? `Exclude ${round(excludedServings)} of ${round(item.servings)} servings`
+                              : `Include ${round(item.servings)} of ${round(item.servings)} servings`}
                           </span>
                         </div>
                         <RecipeExclusionControl
@@ -756,7 +745,7 @@ function ShoppingRecipesStep({
             ))
         ) : (
           <p className="rounded-md border border-dashed border-zinc-200 p-4 text-sm text-zinc-500">
-            No hay comidas en los dias seleccionados.
+            There are no meals on the selected days.
           </p>
         )}
       </div>
@@ -770,9 +759,9 @@ function ShoppingRecipesStep({
             weekStart,
           })}
         >
-          Atrás
+          Back
         </Link>
-        <button className={primaryButtonClassName}>Siguiente</button>
+        <button className={primaryButtonClassName}>Next</button>
       </div>
     </form>
   );
@@ -805,7 +794,7 @@ function ShoppingPantryStep({
       <input
         name="title"
         type="hidden"
-        value={`Compra ${formatShortDate(startDate)} - ${formatShortDate(endDate)}`}
+        value={`Shopping ${formatShortDate(startDate)} - ${formatShortDate(endDate)}`}
       />
       {excludedPlanItemIds.map((itemId) => (
         <input
@@ -847,7 +836,7 @@ function ShoppingPantryStep({
               <div className="min-w-0">
                 <p className="text-sm font-semibold">{item.ingredient.name}</p>
                 <p className="mt-1 text-xs text-zinc-500">
-                  Necesario {round(item.quantity)} {item.ingredient.unit}
+                  Required: {round(item.quantity)} {item.ingredient.unit}
                 </p>
                 <div className="mt-2 grid gap-1">
                   {item.sourceDetails.map((detail) => (
@@ -882,7 +871,7 @@ function ShoppingPantryStep({
           ))
         ) : (
           <p className="rounded-md border border-dashed border-zinc-200 p-4 text-sm text-zinc-500">
-            No hay ingredientes que comprar con esta seleccion.
+            There are no ingredients to buy with this selection.
           </p>
         )}
       </div>
@@ -899,9 +888,9 @@ function ShoppingPantryStep({
             weekStart,
           })}
         >
-          Atrás
+          Back
         </Link>
-        <button className={primaryButtonClassName}>Generar lista</button>
+        <button className={primaryButtonClassName}>Generate list</button>
       </div>
     </form>
   );
@@ -912,8 +901,8 @@ function WeekTotal({ plan }: { plan: ChopItMealPlanWeek }) {
     <div className="grid w-full grid-cols-4 gap-1.5 sm:w-auto sm:gap-2">
       <Metric label="Kcal" value={round(plan.weekTotals.kcal)} />
       <Metric label="Prot." value={round(plan.weekTotals.protein)} />
-      <Metric label="Grasa" value={round(plan.weekTotals.fat)} />
-      <Metric label="Hidr." value={round(plan.weekTotals.carbs)} />
+      <Metric label="Fat" value={round(plan.weekTotals.fat)} />
+      <Metric label="Carbs" value={round(plan.weekTotals.carbs)} />
     </div>
   );
 }
@@ -923,13 +912,13 @@ function WeekAverage({ plan }: { plan: ChopItMealPlanWeek }) {
   return (
     <div>
       <p className="mb-1 text-right text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-zinc-400">
-        Media dia
+        Daily average
       </p>
       <div className="grid w-full grid-cols-4 gap-1.5 sm:w-auto sm:gap-2">
         <Metric label="Kcal" value={round(totals.kcal / 7)} />
         <Metric label="Prot." value={round(totals.protein / 7)} />
-        <Metric label="Grasa" value={round(totals.fat / 7)} />
-        <Metric label="Hidr." value={round(totals.carbs / 7)} />
+        <Metric label="Fat" value={round(totals.fat / 7)} />
+        <Metric label="Carbs" value={round(totals.carbs / 7)} />
       </div>
     </div>
   );
@@ -1020,13 +1009,13 @@ function currentWeekStart(): string {
 
 function weekdayName(date: string): string {
   const names = [
-    'Domingo',
-    'Lunes',
-    'Martes',
-    'Miercoles',
-    'Jueves',
-    'Viernes',
-    'Sabado',
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
   ];
   const day = new Date(`${date}T00:00:00Z`).getUTCDay();
   return names[day] ?? date;
@@ -1038,7 +1027,7 @@ function isWeekend(date: string): boolean {
 }
 
 function formatShortDate(date: string): string {
-  return new Intl.DateTimeFormat('es-ES', {
+  return new Intl.DateTimeFormat('en-GB', {
     day: '2-digit',
     month: 'short',
   }).format(new Date(`${date}T00:00:00Z`));
@@ -1047,7 +1036,7 @@ function formatShortDate(date: string): string {
 function formatWeekRange(weekStart: string): string {
   const startOrdinal = dateOrdinal(weekStart);
   const end = dateFromOrdinal(startOrdinal + 6);
-  const formatter = new Intl.DateTimeFormat('es-ES', {
+  const formatter = new Intl.DateTimeFormat('en-GB', {
     day: '2-digit',
     month: 'short',
   });

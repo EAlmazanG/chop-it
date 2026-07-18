@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 
 export const metadata: Metadata = {
   title: 'Chop It! · Meal planner',
-  description: 'Planifica recetas, macros y listas de compra.',
+  description: 'Plan recipes, macros, and shopping lists.',
   icons: {
     icon: '/chop-it/chopit_icon.png',
   },
@@ -16,7 +16,7 @@ type RootLayoutProps = {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="es">
+    <html lang="en">
       <body>{children}</body>
     </html>
   );

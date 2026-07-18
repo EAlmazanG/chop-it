@@ -39,10 +39,10 @@ describe('ChopItPlansPage', () => {
     );
 
     expect(
-      screen.getByRole('heading', { name: 'Planes de comida' }),
+      screen.getByRole('heading', { name: 'Weekly plan' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: 'Generar compra' }),
+      screen.getByRole('link', { name: 'Generate shopping list' }),
     ).toBeInTheDocument();
   });
 });
