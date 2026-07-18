@@ -703,4 +703,4 @@ def _week_start(value: date) -> date:
 
 
 def _is_oil_name(name: str) -> bool:
-    return "aceite" in name.strip().lower()
+    return "oil" in name.strip().lower()

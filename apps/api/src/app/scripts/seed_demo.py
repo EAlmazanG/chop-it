@@ -10,20 +10,20 @@ def seed_catalog() -> dict[str, str]:
     with SessionLocal() as session:
         repository = ChopItRepository(session)
         categories = {item.name: item for item in repository.list_secondary_categories()}
-        for name in ("Proteínas", "Verduras", "Cereales", "Grasas", "Lácteos", "Fruta"):
+        for name in ("Proteins", "Vegetables", "Grains", "Fats", "Dairy", "Fruit"):
             if name not in categories:
                 categories[name] = repository.create_secondary_category(name=name)
 
         ingredient_specs = (
-            ("Pechuga de pollo", "protein", "Proteínas", "g", 120, 22, 3, 0, None),
-            ("Arroz integral", "carb", "Cereales", "g", 360, 8, 3, 75, None),
-            ("Tomate", "carb", "Verduras", "g", 18, 0.9, 0.2, 3.9, None),
-            ("Espinacas", "carb", "Verduras", "g", 23, 2.9, 0.4, 3.6, None),
-            ("Aguacate", "fat", "Grasas", "g", 160, 2, 15, 9, None),
-            ("Yogur griego", "protein", "Lácteos", "g", 97, 9, 5, 4, None),
-            ("Copos de avena", "carb", "Cereales", "g", 389, 17, 7, 66, None),
-            ("Plátano", "carb", "Fruta", "g", 89, 1.1, 0.3, 23, None),
-            ("Aceite de oliva", "fat", "Grasas", "g", 884, 0, 100, 0, 1.0),
+            ("Chicken breast", "protein", "Proteins", "g", 120, 22, 3, 0, None),
+            ("Brown rice", "carb", "Grains", "g", 360, 8, 3, 75, None),
+            ("Tomato", "carb", "Vegetables", "g", 18, 0.9, 0.2, 3.9, None),
+            ("Spinach", "carb", "Vegetables", "g", 23, 2.9, 0.4, 3.6, None),
+            ("Avocado", "fat", "Fats", "g", 160, 2, 15, 9, None),
+            ("Greek yogurt", "protein", "Dairy", "g", 97, 9, 5, 4, None),
+            ("Rolled oats", "carb", "Grains", "g", 389, 17, 7, 66, None),
+            ("Banana", "carb", "Fruit", "g", 89, 1.1, 0.3, 23, None),
+            ("Olive oil", "fat", "Fats", "g", 884, 0, 100, 0, 1.0),
         )
         ingredients = {item.name: item for item in repository.list_ingredients()}
         for name, macro, category, unit, kcal, protein, fat, carbs, spray in ingredient_specs:
@@ -43,39 +43,39 @@ def seed_catalog() -> dict[str, str]:
 
         recipe_specs = (
             (
-                "Bowl mediterráneo",
-                "Pollo, arroz integral y verduras para una comida completa.",
+                "Mediterranean bowl",
+                "Chicken, brown rice, and vegetables for a complete meal.",
                 30,
                 2,
                 "spray",
                 4,
                 None,
                 (
-                    ("Pechuga de pollo", 320),
-                    ("Arroz integral", 180),
-                    ("Tomate", 180),
-                    ("Espinacas", 100),
+                    ("Chicken breast", 320),
+                    ("Brown rice", 180),
+                    ("Tomato", 180),
+                    ("Spinach", 100),
                 ),
             ),
             (
-                "Avena con yogur y plátano",
-                "Desayuno rápido, cremoso y fácil de preparar con antelación.",
+                "Oats with yogurt and banana",
+                "A quick, creamy breakfast that is easy to prepare in advance.",
                 10,
                 2,
                 "none",
                 None,
                 None,
-                (("Copos de avena", 120), ("Yogur griego", 250), ("Plátano", 180)),
+                (("Rolled oats", 120), ("Greek yogurt", 250), ("Banana", 180)),
             ),
             (
-                "Ensalada verde con aguacate",
-                "Una cena ligera con hojas verdes, tomate y aguacate.",
+                "Green avocado salad",
+                "A light dinner with leafy greens, tomato, and avocado.",
                 12,
                 2,
                 "grams",
                 None,
                 8,
-                (("Espinacas", 180), ("Tomate", 220), ("Aguacate", 160)),
+                (("Spinach", 180), ("Tomato", 220), ("Avocado", 160)),
             ),
         )
         recipes = {item.title: item for item in repository.list_recipes()}
@@ -107,11 +107,11 @@ def seed_current_week(recipes: dict[str, str]) -> None:
     if service.list_week_plan(owner_user_id=DEMO_USER_ID, week_start=monday).items:
         return
     assignments = (
-        (0, "breakfast", "Avena con yogur y plátano"),
-        (0, "lunch", "Bowl mediterráneo"),
-        (1, "dinner", "Ensalada verde con aguacate"),
-        (2, "lunch", "Bowl mediterráneo"),
-        (3, "breakfast", "Avena con yogur y plátano"),
+        (0, "breakfast", "Oats with yogurt and banana"),
+        (0, "lunch", "Mediterranean bowl"),
+        (1, "dinner", "Green avocado salad"),
+        (2, "lunch", "Mediterranean bowl"),
+        (3, "breakfast", "Oats with yogurt and banana"),
     )
     for day_offset, slot, title in assignments:
         service.create_meal_plan_item(

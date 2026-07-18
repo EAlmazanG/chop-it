@@ -4,6 +4,8 @@
 
 This repository is a single-user portfolio demo intended for local execution. It does not provide
 authentication or account isolation and should not be exposed to untrusted networks as-is.
+Docker Compose binds the web and API ports to `127.0.0.1` by default so they are not published to
+other devices on the local network.
 
 ## Reporting
 

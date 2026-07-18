@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 
 import { ArchiveIcon, CloseIcon, SaveIcon } from '@/components/action-icons';
 import { AppHeader } from '@/components/app-header';
-import { ChopItIcon } from '@/components/chop-it-icon';
+import { ChopItSectionHeader } from '@/components/chop-it-section-header';
 import { EditIcon } from '@/components/edit-icon';
 import {
   createChopItCategory,
@@ -151,39 +151,28 @@ export default async function ChopItIngredientsPage({
         sectionHref={chopItHomeHref(actingUserId)}
       />
       <section className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
-        <div className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-zinc-200 pb-6">
-          <div>
-            <div className="flex items-center gap-5">
-              <ChopItIcon
-                className="size-24 shrink-0 rounded-[1.75rem] object-cover sm:size-28"
-                icon="ingredients"
-                priority
-              />
-              <h1 className="text-3xl font-semibold tracking-tight">
-                Ingredientes
-              </h1>
+        <ChopItSectionHeader
+          aside={
+            <div className="rounded-md border border-zinc-200 px-4 py-3 text-right">
+              <p className="text-2xl font-semibold tabular-nums">
+                {ingredients.length}
+              </p>
+              <p className="text-xs uppercase tracking-[0.16em] text-zinc-500">
+                ingredients
+              </p>
             </div>
-            <p className="mt-2 text-sm leading-6 text-zinc-500">
-              Base compartida para calcular recetas, planes y listas de la
-              compra.
-            </p>
-          </div>
-          <div className="rounded-md border border-zinc-200 px-4 py-3 text-right">
-            <p className="text-2xl font-semibold tabular-nums">
-              {ingredients.length}
-            </p>
-            <p className="text-xs uppercase tracking-[0.16em] text-zinc-500">
-              ingredientes
-            </p>
-          </div>
-        </div>
+          }
+          description="Shared catalog for recipes, meal plans, and shopping lists."
+          icon="ingredients"
+          title="Ingredients"
+        />
 
         <div className="mb-3 flex justify-end">
           <Link
             className={secondaryButtonClassName}
             href={categoriesHref(query, sort, sortDir, actingUserId)}
           >
-            Editar etiquetas
+            Edit tags
           </Link>
         </div>
         <IngredientFilters actingUserId={actingUserId} query={query} />
@@ -203,7 +192,7 @@ export default async function ChopItIngredientsPage({
           )}
         </div>
         <Link
-          aria-label="Añadir ingrediente"
+          aria-label="Add ingredient"
           className="fixed bottom-6 right-6 z-30 grid h-14 w-14 place-items-center rounded-full bg-zinc-950 text-3xl font-semibold leading-none text-white shadow-lg transition hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2"
           href={ingredientCreateHref(query, sort, sortDir, actingUserId)}
         >
@@ -279,17 +268,17 @@ function CategoryModal({
         <div className="flex items-start justify-between gap-4 border-b border-zinc-100 p-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">
-              Ingredientes
+              Ingredients
             </p>
             <h2 className="mt-1 text-xl font-semibold tracking-tight">
-              Etiquetas
+              Tags
             </h2>
             <p className="mt-1 text-sm text-zinc-500">
-              Edita las etiquetas secundarias compartidas del catalogo.
+              Manage the catalog&apos;s shared secondary tags.
             </p>
           </div>
           <Link
-            aria-label="Cerrar"
+            aria-label="Close"
             className={modalCloseClassName}
             href={closeHref}
           >
@@ -311,10 +300,10 @@ function CategoryModal({
             <input
               className={inputClassName}
               name="name"
-              placeholder="Nueva etiqueta"
+              placeholder="New tag"
               required
             />
-            <button className={primaryButtonClassName}>Añadir</button>
+            <button className={primaryButtonClassName}>Add</button>
           </form>
 
           <div className="grid gap-2">
@@ -346,23 +335,23 @@ function CategoryModal({
                       required
                     />
                     <button
-                      aria-label={`Guardar etiqueta ${category.name}`}
+                      aria-label={`Save tag ${category.name}`}
                       className={saveIconButtonClassName}
                       formAction={updateCategoryAction}
-                      title="Guardar"
+                      title="Save"
                     >
                       <SaveIcon className="size-5" />
                     </button>
                     {usageCount > 0 ? (
                       <span className="inline-flex h-11 items-center justify-center rounded-md bg-zinc-100 px-3 text-xs font-semibold text-zinc-500">
-                        En uso: {usageCount}
+                        In use: {usageCount}
                       </span>
                     ) : (
                       <button
-                        aria-label={`Eliminar etiqueta ${category.name}`}
+                        aria-label={`Delete tag ${category.name}`}
                         className={archiveIconButtonClassName}
                         formAction={deleteCategoryAction}
-                        title="Borrar"
+                        title="Delete"
                       >
                         <ArchiveIcon className="size-5" />
                       </button>
@@ -378,11 +367,11 @@ function CategoryModal({
                   <p className="text-sm font-semibold">{category.name}</p>
                   {usageCount > 0 ? (
                     <span className="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-semibold text-zinc-500">
-                      {usageCount} ingredientes
+                      {usageCount} ingredients
                     </span>
                   ) : null}
                   <Link
-                    aria-label={`Editar etiqueta ${category.name}`}
+                    aria-label={`Edit tag ${category.name}`}
                     className={editIconButtonClassName}
                     href={categoryEditHref(
                       category.id,
@@ -423,8 +412,8 @@ function IngredientEditorModal({
 }) {
   const title =
     mode === 'create'
-      ? 'Añadir ingrediente'
-      : `Editar ${ingredient?.name ?? ''}`;
+      ? 'Add ingredient'
+      : `Edit ${ingredient?.name ?? ''}`;
   const selectedMacroTag = ingredient?.primaryMacroTag ?? 'protein';
   const selectedCategoryId =
     ingredient?.secondaryCategoryId ?? categories[0]?.id;
@@ -439,14 +428,14 @@ function IngredientEditorModal({
         <div className="flex items-start justify-between gap-4 border-b border-zinc-100 p-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">
-              Ingrediente
+              Ingredient
             </p>
             <h2 className="mt-1 text-xl font-semibold tracking-tight">
               {title}
             </h2>
           </div>
           <Link
-            aria-label="Cerrar"
+            aria-label="Close"
             className={modalCloseClassName}
             href={closeHref}
           >
@@ -461,17 +450,17 @@ function IngredientEditorModal({
           {ingredient ? (
             <input name="id" type="hidden" value={ingredient.id} />
           ) : null}
-          <Field label="Nombre">
+          <Field label="Name">
             <input
               className={inputClassName}
               defaultValue={ingredient?.name ?? ''}
               name="name"
-              placeholder="Pollo"
+              placeholder="Chicken"
               required
             />
           </Field>
           <div className="grid gap-3 sm:grid-cols-3">
-            <Field label="Categoría">
+            <Field label="Category">
               <MacroCategorySelect
                 className={inputClassName}
                 defaultValue={selectedMacroTag}
@@ -479,7 +468,7 @@ function IngredientEditorModal({
                 required
               />
             </Field>
-            <Field label="Etiqueta">
+            <Field label="Tag">
               <select
                 className={inputClassName}
                 defaultValue={selectedCategoryId}
@@ -494,7 +483,7 @@ function IngredientEditorModal({
                 ))}
               </select>
             </Field>
-            <Field label="Unidad">
+            <Field label="Unit">
               <select
                 className={inputClassName}
                 defaultValue={ingredient?.unit ?? 'g'}
@@ -518,14 +507,14 @@ function IngredientEditorModal({
           {isOilIngredient ? (
             <section className="grid gap-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950">
               <div>
-                <p className="font-semibold">Aceite de referencia</p>
+                <p className="font-semibold">Reference oil</p>
                 <p className="mt-1 text-xs leading-5 text-amber-900">
-                  Las recetas que usan aceite en spray toman los macros de este
-                  ingrediente. El valor de abajo convierte cada spray a gramos
-                  antes de calcular calorias y grasa.
+                  Recipes using oil spray take their macros from this
+                  ingredient. The value below converts each spray to grams
+                  before calculating calories and fat.
                 </p>
               </div>
-              <Field label="Gramos por spray">
+              <Field label="Grams per spray">
                 <input
                   className="h-11 w-full rounded-md border border-amber-200 bg-white px-3 text-sm outline-none transition placeholder:text-amber-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/10"
                   defaultValue={ingredient?.gramsPerSpray ?? 1}
@@ -540,18 +529,18 @@ function IngredientEditorModal({
           ) : null}
           <div className="flex flex-wrap gap-2 border-t border-zinc-100 pt-4">
             <button
-              aria-label={mode === 'create' ? 'Añadir ingrediente' : 'Guardar'}
+              aria-label={mode === 'create' ? 'Add ingredient' : 'Save'}
               className={saveIconButtonClassName}
-              title={mode === 'create' ? 'Añadir ingrediente' : 'Guardar'}
+              title={mode === 'create' ? 'Add ingredient' : 'Save'}
             >
               <SaveIcon className="size-5" />
             </button>
             {ingredient && deleteAction && !ingredient.isOil ? (
               <button
-                aria-label="Archivar"
+                aria-label="Archive"
                 className={archiveIconButtonClassName}
                 formAction={deleteAction}
-                title="Archivar"
+                title="Archive"
                 type="submit"
               >
                 <ArchiveIcon className="size-5" />
@@ -559,7 +548,7 @@ function IngredientEditorModal({
             ) : null}
             {ingredient?.isOil ? (
               <p className="self-center text-xs font-medium text-amber-800">
-                No se puede archivar porque se usa como referencia de aceite.
+                This ingredient cannot be archived because it is the oil reference.
               </p>
             ) : null}
           </div>
@@ -588,17 +577,17 @@ function IngredientList({
     categories.map((category, index) => [category.id, { ...category, index }]),
   );
   const headers = [
-    { field: 'name', label: 'Nombre', mobileLabel: 'Nombre', align: 'left' },
+    { field: 'name', label: 'Name', mobileLabel: 'Name', align: 'left' },
     {
       field: 'primaryMacroTag',
-      label: 'Categoría',
+      label: 'Category',
       mobileLabel: 'Cat.',
       align: 'center',
     },
     {
       field: 'secondaryCategory',
-      label: 'Etiqueta',
-      mobileLabel: 'Etiq.',
+      label: 'Tag',
+      mobileLabel: 'Tag',
       align: 'center',
     },
     {
@@ -615,13 +604,13 @@ function IngredientList({
     },
     {
       field: 'fatPer100',
-      label: 'Grasa',
+      label: 'Fat',
       mobileLabel: 'G',
       align: 'right',
     },
     {
       field: 'carbsPer100',
-      label: 'Hidr.',
+      label: 'Carbs',
       mobileLabel: 'H',
       align: 'right',
     },
@@ -677,7 +666,7 @@ function IngredientList({
                   </h2>
                   {ingredient.isOil ? (
                     <span className="mt-1 inline-flex rounded-full border border-amber-200 bg-amber-100 px-1.5 py-0.5 text-[0.5rem] font-semibold uppercase tracking-[0.08em] text-amber-800 sm:px-2 sm:text-[0.62rem]">
-                      Aceite
+                      Oil
                     </span>
                   ) : null}
                 </td>
@@ -690,7 +679,7 @@ function IngredientList({
                 <td className="px-1 py-2 text-center sm:px-2 sm:py-3">
                   <CategoryPill
                     index={category?.index ?? 0}
-                    label={category?.name ?? 'Sin etiqueta'}
+                    label={category?.name ?? 'No tag'}
                   />
                 </td>
                 <td className="px-1 py-2 text-right sm:px-2 sm:py-3">
@@ -707,19 +696,19 @@ function IngredientList({
                 </td>
                 <td className="px-1 py-2 text-right sm:px-2 sm:py-3">
                   <InlineMetric
-                    label="Grasa"
+                    label="Fat"
                     value={`${round(ingredient.fatPer100)} g`}
                   />
                 </td>
                 <td className="px-1 py-2 text-right sm:px-2 sm:py-3">
                   <InlineMetric
-                    label="Hidr."
+                    label="Carbs"
                     value={`${round(ingredient.carbsPer100)} g`}
                   />
                 </td>
                 <td className="px-0.5 py-2 pr-1 text-right sm:px-2 sm:py-3 lg:px-4">
                   <Link
-                    aria-label={`Editar ${ingredient.name}`}
+                    aria-label={`Edit ${ingredient.name}`}
                     className={editIconButtonClassName}
                     href={ingredientEditHref(
                       ingredient.id,
@@ -875,10 +864,9 @@ function CompactMetric({ label, value }: { label: string; value: string }) {
 function EmptyState() {
   return (
     <div className="rounded-lg border border-dashed border-zinc-300 px-5 py-12 text-center">
-      <p className="text-sm font-semibold">Sin ingredientes</p>
+      <p className="text-sm font-semibold">No ingredients</p>
       <p className="mt-2 text-sm text-zinc-500">
-        La base compartida aparecera aqui cuando se creen ingredientes desde la
-        API.
+        The shared catalog will appear here once ingredients are created.
       </p>
     </div>
   );
@@ -1035,12 +1023,12 @@ function round(value: number): number {
 
 function macroTagLabel(value: ChopItIngredient['primaryMacroTag']): string {
   if (value === 'protein') {
-    return 'Proteina';
+    return 'Protein';
   }
   if (value === 'fat') {
-    return 'Grasa';
+    return 'Fat';
   }
-  return 'Hidrato';
+  return 'Carbs';
 }
 
 function macroTagInitial(value: ChopItIngredient['primaryMacroTag']): string {
@@ -1202,10 +1190,10 @@ function sortHeaderLabel(
   sortDir: SortDirection,
 ): string {
   if (!isActive) {
-    return `Ordenar por ${label} ascendente`;
+    return `Sort by ${label} ascending`;
   }
   if (sortDir === 'asc') {
-    return `Ordenar por ${label} descendente`;
+    return `Sort by ${label} descending`;
   }
-  return `Quitar orden por ${label}`;
+  return `Clear ${label} sorting`;
 }

@@ -27,21 +27,21 @@ type IngredientMacroDefaults = {
 const macroTargets: MacroTarget[] = [
   { inputName: 'kcal', label: 'Kcal', name: 'kcalPer100' },
   { inputName: 'protein', label: 'Prot.', name: 'proteinPer100' },
-  { inputName: 'fat', label: 'Grasa', name: 'fatPer100' },
-  { inputName: 'carbs', label: 'Hidr.', name: 'carbsPer100' },
+  { inputName: 'fat', label: 'Fat', name: 'fatPer100' },
+  { inputName: 'carbs', label: 'Carbs', name: 'carbsPer100' },
 ];
 
 const customMacroTargets: MacroTarget[] = [
-  { inputName: 'kcal', label: 'Kcal en esa cantidad', name: 'kcalPer100' },
+  { inputName: 'kcal', label: 'Kcal in this amount', name: 'kcalPer100' },
   {
     inputName: 'protein',
-    label: 'Proteina en esa cantidad',
+    label: 'Protein in this amount',
     name: 'proteinPer100',
   },
-  { inputName: 'fat', label: 'Grasa en esa cantidad', name: 'fatPer100' },
+  { inputName: 'fat', label: 'Fat in this amount', name: 'fatPer100' },
   {
     inputName: 'carbs',
-    label: 'Hidratos en esa cantidad',
+    label: 'Carbs in this amount',
     name: 'carbsPer100',
   },
 ];
@@ -74,21 +74,21 @@ export function IngredientMacroEntry({
       <div className="grid gap-3 sm:grid-cols-[1fr_15rem] sm:items-end">
         <div>
           <h3 className="text-sm font-semibold text-zinc-950">
-            Valores nutricionales
+            Nutrition values
           </h3>
           <p className="mt-1 text-xs leading-5 text-zinc-500">
-            El ingrediente siempre se guarda normalizado por cada 100 g/ml.
+            Ingredients are always stored as values per 100 g/ml.
           </p>
         </div>
         <label className="grid gap-1.5 text-sm font-medium text-zinc-800">
-          <span>Modo de entrada</span>
+          <span>Input mode</span>
           <select
             className={inputClassName}
             onChange={(event) => setMode(event.target.value as MacroMode)}
             value={mode}
           >
-            <option value="per100">Valores por 100 g/ml</option>
-            <option value="custom">Valores por cantidad concreta</option>
+            <option value="per100">Values per 100 g/ml</option>
+            <option value="custom">Values for a custom amount</option>
           </select>
         </label>
       </div>
@@ -96,7 +96,7 @@ export function IngredientMacroEntry({
       {mode === 'per100' ? (
         <div>
           <p className="text-xs leading-5 text-zinc-500">
-            Usa este modo si ya tienes los macros por cada 100 g o 100 ml.
+            Use this mode when your macros are already per 100 g or 100 ml.
           </p>
           <div className="mt-3 grid gap-3 sm:grid-cols-4">
             {macroTargets.map((target) => (
@@ -127,12 +127,12 @@ export function IngredientMacroEntry({
             />
           ))}
           <p className="text-xs leading-5 text-zinc-500">
-            Usa este modo si una etiqueta o app te da macros para una cantidad
-            concreta. Se recalculan antes de guardar.
+            Use this mode when a label or app provides macros for a custom
+            amount. Values are normalized before saving.
           </p>
           <div className="mt-3 grid gap-2 sm:grid-cols-5">
             <label className="grid gap-1 text-xs font-medium text-zinc-700">
-              <span>Cantidad original</span>
+              <span>Original amount</span>
               <input
                 className={inputClassName}
                 inputMode="decimal"

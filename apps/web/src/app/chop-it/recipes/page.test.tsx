@@ -24,7 +24,7 @@ describe('ChopItRecipesPage', () => {
     jest.mocked(fetchChopItRecipes).mockResolvedValue([
       {
         id: 'recipe-1',
-        title: 'Bowl mediterráneo',
+        title: 'Mediterranean bowl',
         description: 'Demo recipe',
         imageUrl: null,
         prepTimeMinutes: 30,
@@ -54,8 +54,8 @@ describe('ChopItRecipesPage', () => {
     render(await ChopItRecipesPage({}));
 
     expect(
-      screen.getByRole('heading', { name: 'Recetas' }),
+      screen.getByRole('heading', { name: 'Recipes' }),
     ).toBeInTheDocument();
-    expect(screen.getByText('Bowl mediterráneo')).toBeInTheDocument();
+    expect(screen.getByText('Mediterranean bowl')).toBeInTheDocument();
   });
 });

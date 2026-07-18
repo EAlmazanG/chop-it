@@ -8,69 +8,53 @@ const menuItems: Array<{
   href: string;
   icon: ChopItIconName;
   label: string;
-  eyebrow: string;
 }> = [
   {
     href: '/chop-it/recipes',
     icon: 'recipes',
-    label: 'Recetas',
-    eyebrow: '01 · Cocina',
-    description: 'Crea platos y calcula sus macros por ración.',
+    label: 'Recipes',
+    description: 'Create dishes and calculate macros per serving.',
   },
   {
     href: '/chop-it/ingredients',
     icon: 'ingredients',
-    label: 'Ingredientes',
-    eyebrow: '02 · Despensa',
-    description: 'Mantén un catálogo nutricional ordenado.',
+    label: 'Ingredients',
+    description: 'Keep an organized nutritional catalog.',
   },
   {
     href: '/chop-it/plans',
     icon: 'plans',
-    label: 'Plan semanal',
-    eyebrow: '03 · Ritmo',
-    description: 'Distribuye comidas y revisa los totales.',
+    label: 'Weekly plan',
+    description: 'Schedule meals and review nutrition totals.',
   },
   {
     href: '/chop-it/shopping-lists',
     icon: 'shoppingList',
-    label: 'Lista de compra',
-    eyebrow: '04 · Mercado',
-    description: 'Convierte el plan en una lista accionable.',
+    label: 'Shopping list',
+    description: 'Turn your plan into an actionable list.',
   },
 ];
 
 export default function ChopItPage() {
   return (
-    <main className="min-h-screen overflow-hidden bg-[#f4f0e7] text-[#1f2b24]">
+    <main className="min-h-screen overflow-hidden bg-white text-[#1f2b24]">
       <AppHeader />
       <section className="relative mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16 lg:py-20">
-        <div className="pointer-events-none absolute -right-36 top-2 size-96 rounded-full bg-[#dbe7c9]/60 blur-3xl" />
-        <div className="pointer-events-none absolute -left-40 top-80 size-80 rounded-full bg-[#efc48d]/35 blur-3xl" />
-
-        <div className="relative grid items-end gap-8 border-b border-[#253128]/15 pb-10 lg:grid-cols-[1fr_auto]">
-          <div className="max-w-3xl">
-            <p className="mb-5 text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-[#68746c]">
-              Cocina con intención · compra solo lo necesario
-            </p>
+        <div className="relative flex justify-center">
+          <div className="flex items-center justify-center gap-4 sm:gap-7">
+            <ChopItIcon
+              className="size-20 shrink-0 rounded-2xl object-cover sm:size-28 lg:size-32 lg:rounded-[1.75rem]"
+              icon="home"
+              priority
+            />
             <h1 className="font-serif text-6xl leading-[0.88] tracking-[-0.045em] text-[#172019] sm:text-8xl lg:text-9xl">
               Chop <span className="italic text-[#b54f32]">It!</span>
             </h1>
-            <p className="mt-7 max-w-xl text-base leading-7 text-[#59645d] sm:text-lg">
-              Recetas, planificación nutricional y lista de compra en un flujo
-              sencillo. Esta demo incluye datos ficticios para que puedas
-              empezar a explorarla al instante.
-            </p>
           </div>
-          <ChopItIcon
-            className="hidden size-36 rotate-3 rounded-[2rem] object-cover shadow-[0_24px_70px_-26px_rgba(31,43,36,0.5)] lg:block"
-            icon="home"
-            priority
-          />
         </div>
 
         <nav
-          aria-label="Secciones de Chop It"
+          aria-label="Chop It sections"
           className="relative mt-8 grid gap-3 md:grid-cols-2"
         >
           {menuItems.map((item) => (
@@ -79,10 +63,7 @@ export default function ChopItPage() {
               href={item.href}
               key={item.href}
             >
-              <span className="flex flex-col justify-between">
-                <span className="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-[#7b857e]">
-                  {item.eyebrow}
-                </span>
+              <span className="flex flex-col justify-center">
                 <span>
                   <span className="block font-serif text-3xl tracking-tight text-[#1f2b24] sm:text-4xl">
                     {item.label}

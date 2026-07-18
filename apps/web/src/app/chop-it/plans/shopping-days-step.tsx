@@ -66,13 +66,13 @@ export function ShoppingDaysStep({
             weekStart: previousWeek,
           })}
         >
-          ← Semana
+          ← Week
         </Link>
         <p className="text-sm text-zinc-500 sm:text-center">
           {currentSelectedDays.length}{' '}
           {currentSelectedDays.length === 1
-            ? 'dia seleccionado'
-            : 'dias seleccionados'}
+            ? 'day selected'
+            : 'days selected'}
         </p>
         <Link
           className={`${secondaryButtonClassName} h-10 px-3`}
@@ -83,7 +83,7 @@ export function ShoppingDaysStep({
             weekStart: nextWeek,
           })}
         >
-          Semana →
+          Week →
         </Link>
       </div>
       <div className="grid min-h-0 flex-1 gap-2 overflow-auto pr-1 sm:grid-cols-2 lg:grid-cols-4">
@@ -97,7 +97,7 @@ export function ShoppingDaysStep({
                 {weekdayName(day.date)}
               </span>
               <span className="mt-1 block text-xs text-zinc-500">
-                {formatShortDate(day.date)} · {day.items.length} comidas
+                {formatShortDate(day.date)} · {day.items.length} meals
               </span>
             </span>
             <input
@@ -110,7 +110,7 @@ export function ShoppingDaysStep({
       </div>
       {!canContinue ? (
         <p className="text-sm text-zinc-500">
-          Selecciona al menos un dia para continuar.
+          Select at least one day to continue.
         </p>
       ) : null}
       <div className="flex shrink-0 justify-center border-t border-zinc-100 bg-white pt-4">
@@ -121,7 +121,7 @@ export function ShoppingDaysStep({
           type="submit"
           value="recipes"
         >
-          Siguiente
+          Next
         </button>
       </div>
     </form>
@@ -156,19 +156,19 @@ function shoppingWizardHref({
 
 function weekdayName(date: string): string {
   const names = [
-    'Domingo',
-    'Lunes',
-    'Martes',
-    'Miercoles',
-    'Jueves',
-    'Viernes',
-    'Sabado',
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
   ];
   return names[new Date(`${date}T00:00:00Z`).getUTCDay()] ?? date;
 }
 
 function formatShortDate(date: string): string {
-  const formatter = new Intl.DateTimeFormat('es-ES', {
+  const formatter = new Intl.DateTimeFormat('en-GB', {
     day: '2-digit',
     month: 'short',
     timeZone: 'UTC',

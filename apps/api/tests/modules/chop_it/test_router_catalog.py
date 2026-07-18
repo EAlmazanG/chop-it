@@ -185,13 +185,13 @@ def test_oil_ingredient_can_be_updated_but_not_deleted(
         category = client.post(
             "/api/v1/chop-it/ingredient-categories",
             headers=headers,
-            json={"name": "Grasa"},
+            json={"name": "Fat"},
         ).json()
         ingredient = client.post(
             "/api/v1/chop-it/ingredients",
             headers=headers,
             json={
-                "name": "Aceite de oliva",
+                "name": "Olive oil",
                 "primaryMacroTag": "fat",
                 "secondaryCategoryId": category["id"],
                 "unit": "g",
@@ -207,7 +207,7 @@ def test_oil_ingredient_can_be_updated_but_not_deleted(
             f"/api/v1/chop-it/ingredients/{ingredient['id']}",
             headers=headers,
             json={
-                "name": "Aceite de oliva",
+                "name": "Olive oil",
                 "primaryMacroTag": "fat",
                 "secondaryCategoryId": category["id"],
                 "unit": "g",
@@ -266,7 +266,7 @@ def test_single_user_can_create_and_list_recipes_with_calculated_macros(
             headers=headers,
             json={
                 "title": "Pollo plancha",
-                "description": "Cena sencilla",
+                "description": "Simple dinner",
                 "imageUrl": "https://example.com/pollo.jpg",
                 "prepTimeMinutes": 15,
                 "servings": 2,
@@ -345,7 +345,7 @@ def test_single_user_can_update_archive_restore_and_delete_recipes(
             headers=headers,
             json={
                 "title": "Pollo doble",
-                "description": "Mas cantidad",
+                "description": "Larger amount",
                 "imageUrl": None,
                 "prepTimeMinutes": 20,
                 "servings": 2,
@@ -584,7 +584,7 @@ def test_single_user_can_generate_current_shopping_list_from_plan(
             "/api/v1/chop-it/shopping-lists/generate",
             headers=headers,
             json={
-                "title": "Compra semanal",
+                "title": "Weekly shopping",
                 "startDate": "2026-06-08",
                 "endDate": "2026-06-08",
                 "excludedRecipeIds": [rice_recipe["id"]],
@@ -619,7 +619,7 @@ def test_single_user_can_generate_current_shopping_list_from_plan(
 
     assert generate_response.status_code == 200
     generated = generate_response.json()
-    assert generated["title"] == "Compra semanal"
+    assert generated["title"] == "Weekly shopping"
     assert generated["status"] == "current"
     items_by_name = {item["ingredientName"]: item for item in generated["items"]}
     assert items_by_name["Pollo"]["section"] == "pantry"
@@ -730,7 +730,7 @@ def test_shopping_list_excludes_only_selected_plan_assignment(
             "/api/v1/chop-it/shopping-lists/generate",
             headers=headers,
             json={
-                "title": "Compra parcial",
+                "title": "Partial shopping",
                 "startDate": "2026-06-08",
                 "endDate": "2026-06-09",
                 "excludedPlanItemIds": [first_plan_item["id"]],
@@ -825,7 +825,7 @@ def test_shopping_list_excludes_partial_servings_from_plan_assignment(
             "/api/v1/chop-it/shopping-lists/generate",
             headers=headers,
             json={
-                "title": "Compra parcial",
+                "title": "Partial shopping",
                 "startDate": "2026-06-08",
                 "endDate": "2026-06-08",
                 "excludedPlanItems": [{"planItemId": plan_item["id"], "servings": 1}],
@@ -917,7 +917,7 @@ def test_single_user_can_toggle_and_recover_shopping_lists(
             "/api/v1/chop-it/shopping-lists/generate",
             headers=headers,
             json={
-                "title": "Compra semanal",
+                "title": "Weekly shopping",
                 "startDate": "2026-06-08",
                 "endDate": "2026-06-08",
                 "excludedRecipeIds": [],
@@ -940,7 +940,7 @@ def test_single_user_can_toggle_and_recover_shopping_lists(
             "/api/v1/chop-it/shopping-lists/generate",
             headers=headers,
             json={
-                "title": "Compra siguiente",
+                "title": "Next shopping",
                 "startDate": "2026-06-08",
                 "endDate": "2026-06-08",
                 "excludedRecipeIds": [],
@@ -996,3 +996,93 @@ def test_single_user_can_toggle_and_recover_shopping_lists(
     )
     assert delete_response.status_code == 204
     assert current_after_delete_response.json() is None
+
+
+def test_requests_reject_invalid_nutrition_urls_and_plan_values() -> None:
+    client = _client()
+
+    ingredient_response = client.post(
+        "/api/v1/chop-it/ingredients",
+        json={
+            "name": "Invalid ingredient",
+            "primaryMacroTag": "unknown",
+            "secondaryCategoryId": "category-id",
+            "unit": "kg",
+            "kcalPer100": -1,
+            "proteinPer100": "Infinity",
+            "fatPer100": -2,
+            "carbsPer100": -3,
+        },
+    )
+    recipe_response = client.post(
+        "/api/v1/chop-it/recipes",
+        json={
+            "title": "Unsafe recipe",
+            "description": "",
+            "imageUrl": "javascript:alert(1)",
+            "prepTimeMinutes": -1,
+            "servings": 0,
+            "oilMode": "unknown",
+            "ingredients": [{"ingredientId": "ingredient-id", "quantity": 0}],
+        },
+    )
+    plan_response = client.post(
+        "/api/v1/chop-it/plans/items",
+        json={
+            "mealDate": "2026-06-08",
+            "mealSlot": "midnight",
+            "recipeId": "recipe-id",
+            "servings": -1,
+        },
+    )
+
+    assert ingredient_response.status_code == 422
+    assert recipe_response.status_code == 422
+    assert plan_response.status_code == 422
+
+
+def test_shopping_list_requests_reject_invalid_boundaries() -> None:
+    client = _client()
+
+    inverted_dates_response = client.post(
+        "/api/v1/chop-it/shopping-lists/generate",
+        json={
+            "title": "Weekly shopping",
+            "startDate": "2026-06-09",
+            "endDate": "2026-06-08",
+        },
+    )
+    negative_pantry_response = client.post(
+        "/api/v1/chop-it/shopping-lists/generate",
+        json={
+            "title": "Weekly shopping",
+            "startDate": "2026-06-08",
+            "endDate": "2026-06-09",
+            "pantryItems": [{"ingredientId": "ingredient-id", "quantity": -1}],
+        },
+    )
+    blank_title_response = client.post(
+        "/api/v1/chop-it/shopping-lists/generate",
+        json={
+            "title": "   ",
+            "startDate": "2026-06-08",
+            "endDate": "2026-06-09",
+        },
+    )
+
+    assert inverted_dates_response.status_code == 422
+    assert negative_pantry_response.status_code == 422
+    assert blank_title_response.status_code == 422
+
+
+def test_api_docs_receive_a_scoped_content_security_policy() -> None:
+    client = _client()
+
+    docs_response = client.get("/docs")
+    health_response = client.get("/api/v1/health")
+
+    assert docs_response.status_code == 200
+    assert "https://cdn.jsdelivr.net" in docs_response.headers["content-security-policy"]
+    assert health_response.headers["content-security-policy"] == (
+        "default-src 'none'; frame-ancestors 'none'; base-uri 'none'"
+    )

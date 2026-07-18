@@ -73,9 +73,9 @@ def test_oil_ingredient_controls_recipe_oil_spray_reference() -> None:
     with next(_session()) as session:
         user = _user(session, "Test cook")
         repository = ChopItRepository(session)
-        category = repository.create_secondary_category(name="Grasa")
+        category = repository.create_secondary_category(name="Fat")
         oil = repository.create_ingredient(
-            name="Aceite de oliva",
+            name="Olive oil",
             primary_macro_tag="fat",
             secondary_category_id=category.id,
             unit="g",
@@ -101,7 +101,7 @@ def test_oil_ingredient_controls_recipe_oil_spray_reference() -> None:
         )
         repository.update_ingredient(
             oil.id,
-            name="Aceite de oliva",
+            name="Olive oil",
             primary_macro_tag="fat",
             secondary_category_id=category.id,
             unit="g",
@@ -200,7 +200,7 @@ def test_user_owned_plans_and_current_lists_are_isolated_by_owner() -> None:
         )
         first_list = repository.create_shopping_list(
             owner_user_id=first_user.id,
-            title="Semana 24",
+            title="Week 24",
             start_date="2026-06-08",
             end_date="2026-06-14",
             items=[
@@ -217,7 +217,7 @@ def test_user_owned_plans_and_current_lists_are_isolated_by_owner() -> None:
         )
         repository.create_shopping_list(
             owner_user_id=second_user.id,
-            title="Otra semana",
+            title="Another week",
             start_date="2026-06-08",
             end_date="2026-06-14",
             items=[],

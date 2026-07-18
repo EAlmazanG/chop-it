@@ -14,7 +14,7 @@ export function AppHeader({
   return (
     <header className="flex h-[4.5rem] items-center justify-between border-b border-zinc-100 bg-white px-6 sm:px-8">
       <Link
-        className="flex items-center gap-2.5 text-sm font-semibold text-zinc-950"
+        className="flex items-center gap-2.5 font-serif text-lg font-semibold tracking-tight text-zinc-950"
         href="/"
       >
         <Image
@@ -31,10 +31,10 @@ export function AppHeader({
       ) : section ? (
         sectionHref ? (
           <Link
-            aria-label={`Volver a ${section}`}
+            aria-label={`Back to ${section}`}
             className="grid size-8 place-items-center rounded-full text-zinc-500 transition hover:bg-zinc-50 hover:text-zinc-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950"
             href={sectionHref}
-            title={`Volver a ${section}`}
+            title={`Back to ${section}`}
           >
             <span
               aria-hidden="true"

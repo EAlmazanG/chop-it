@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 
 import { CloseIcon } from '@/components/action-icons';
 import { AppHeader } from '@/components/app-header';
-import { ChopItIcon } from '@/components/chop-it-icon';
+import { ChopItSectionHeader } from '@/components/chop-it-section-header';
 import { EditIcon } from '@/components/edit-icon';
 import {
   archiveChopItRecipe,
@@ -135,30 +135,21 @@ export default async function ChopItRecipesPage({
         sectionHref={chopItHomeHref(actingUserId)}
       />
       <section className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
-        <div className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-zinc-200 pb-6">
-          <div>
-            <div className="flex items-center gap-5">
-              <ChopItIcon
-                className="size-24 shrink-0 rounded-[1.75rem] object-cover sm:size-28"
-                icon="recipes"
-                priority
-              />
-              <h1 className="text-3xl font-semibold tracking-tight">Recetas</h1>
+        <ChopItSectionHeader
+          aside={
+            <div className="rounded-md border border-zinc-200 px-4 py-3 text-right">
+              <p className="text-2xl font-semibold tabular-nums">
+                {recipes.length}
+              </p>
+              <p className="text-xs uppercase tracking-[0.16em] text-zinc-500">
+                recipes
+              </p>
             </div>
-            <p className="mt-2 text-sm leading-6 text-zinc-500">
-              Catalogo compartido con ingredientes, aceite, raciones y macros
-              calculados.
-            </p>
-          </div>
-          <div className="rounded-md border border-zinc-200 px-4 py-3 text-right">
-            <p className="text-2xl font-semibold tabular-nums">
-              {recipes.length}
-            </p>
-            <p className="text-xs uppercase tracking-[0.16em] text-zinc-500">
-              recetas
-            </p>
-          </div>
-        </div>
+          }
+          description="Shared catalog with ingredients, oil, servings, and calculated macros."
+          icon="recipes"
+          title="Recipes"
+        />
 
         <RecipeFilters actingUserId={actingUserId} query={query} sort={sort} />
         <div className="mb-5 flex justify-end">
@@ -166,7 +157,7 @@ export default async function ChopItRecipesPage({
             className="inline-flex h-10 items-center justify-center rounded-full border border-zinc-200 px-4 text-sm font-semibold text-zinc-700 transition hover:border-zinc-950 hover:text-zinc-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2"
             href={recipesArchivedHref(query, actingUserId)}
           >
-            Archivadas
+            Archived
             <span className="ml-2 rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500">
               {archivedRecipes.length}
             </span>
@@ -189,7 +180,7 @@ export default async function ChopItRecipesPage({
         </div>
 
         <Link
-          aria-label="Añadir receta"
+          aria-label="Add recipe"
           className="fixed bottom-6 right-6 z-30 grid h-14 w-14 place-items-center rounded-full bg-zinc-950 text-3xl font-semibold leading-none text-white shadow-lg transition hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2"
           href={recipeCreateHref(searchParams.q ?? '', actingUserId)}
         >
@@ -260,24 +251,24 @@ function RecipeFilters({
         <input name="actingUserId" type="hidden" value={actingUserId} />
       ) : null}
       {sort ? <input name="sort" type="hidden" value={sort} /> : null}
-      <Field label="Buscar recetas">
+      <Field label="Search recipes">
         <input
           className={inputClassName}
           defaultValue={query}
           name="q"
-          placeholder="Pollo..."
+          placeholder="Chicken..."
         />
       </Field>
-      <button className={`${primaryButtonClassName} self-end`}>Buscar</button>
+      <button className={`${primaryButtonClassName} self-end`}>Search</button>
       <div className="flex flex-wrap items-center gap-2 sm:col-span-2">
         <span className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">
-          Orden
+          Sort
         </span>
         <Link
           aria-label={
             sort === 'creator'
-              ? 'Ordenar por creador activo'
-              : 'Ordenar por creador'
+              ? 'Creator sorting active'
+              : 'Sort by creator'
           }
           className={`inline-flex h-8 items-center rounded-full border px-3 text-xs font-semibold transition hover:border-zinc-950 ${
             sort === 'creator'
@@ -290,7 +281,7 @@ function RecipeFilters({
               : recipesSortHref(query, 'creator', actingUserId, 'recipe-search')
           }
         >
-          Creador{sort === 'creator' ? ' ↑' : ''}
+          Creator{sort === 'creator' ? ' ↑' : ''}
         </Link>
       </div>
     </form>
@@ -318,34 +309,34 @@ function RecipeCard({
           </h2>
           <span
             className="shrink-0 rounded-full border border-zinc-200 bg-zinc-50 px-2.5 py-1 text-[11px] font-semibold leading-none text-zinc-500"
-            title={`Creada por ${recipeCreatorLabel(recipe)}`}
+            title={`Created by ${recipeCreatorLabel(recipe)}`}
           >
             {recipeCreatorLabel(recipe)}
           </span>
         </div>
         <p className="mt-2 max-h-10 overflow-hidden text-sm leading-5 text-zinc-500">
-          {recipe.description || 'Sin descripcion'}
+          {recipe.description || 'No description'}
         </p>
       </div>
       <div className="grid gap-2">
         <div className="grid grid-cols-3 gap-2">
           <RecipeFact label="Kcal" value={`${round(recipe.perServingKcal)}`} />
-          <RecipeFact label="Tiempo" value={`${recipe.prepTimeMinutes} min`} />
-          <RecipeFact label="Raciones" value={`${recipe.servings}`} />
+          <RecipeFact label="Time" value={`${recipe.prepTimeMinutes} min`} />
+          <RecipeFact label="Servings" value={`${recipe.servings}`} />
         </div>
         <div className="grid grid-cols-3 gap-2">
           <MacroFact
-            label="Proteína"
+            label="Protein"
             tone="protein"
             value={`${round(recipe.perServingProtein)} g`}
           />
           <MacroFact
-            label="Grasa"
+            label="Fat"
             tone="fat"
             value={`${round(recipe.perServingFat)} g`}
           />
           <MacroFact
-            label="Hidratos"
+            label="Carbs"
             tone="carb"
             value={`${round(recipe.perServingCarbs)} g`}
           />
@@ -390,11 +381,11 @@ function RecipeDetailModal({
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">
-                Receta
+                Recipe
               </p>
               <span
                 className="rounded-full border border-zinc-200 bg-zinc-50 px-2.5 py-1 text-[11px] font-semibold leading-none text-zinc-500"
-                title={`Creada por ${recipeCreatorLabel(recipe)}`}
+                title={`Created by ${recipeCreatorLabel(recipe)}`}
               >
                 {recipeCreatorLabel(recipe)}
               </span>
@@ -404,7 +395,7 @@ function RecipeDetailModal({
             </h2>
           </div>
           <Link
-            aria-label="Cerrar"
+            aria-label="Close"
             className={modalCloseClassName}
             href={recipesHref(query, actingUserId)}
           >
@@ -415,14 +406,14 @@ function RecipeDetailModal({
         <div className="grid gap-5 p-4">
           <MacroSummary recipe={recipe} />
           <div>
-            <p className="text-sm font-semibold">Descripcion</p>
+            <p className="text-sm font-semibold">Description</p>
             <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-zinc-600">
-              {recipe.description || 'Sin descripcion'}
+              {recipe.description || 'No description'}
             </p>
           </div>
           <div className="grid grid-cols-3 gap-1.5 sm:gap-3">
-            <DetailItem label="Minutos" value={`${recipe.prepTimeMinutes}`} />
-            <DetailItem label="Raciones" value={`${recipe.servings}`} />
+            <DetailItem label="Minutes" value={`${recipe.prepTimeMinutes}`} />
+            <DetailItem label="Servings" value={`${recipe.servings}`} />
             <DetailItem
               action={
                 recipe.oilMode === 'spray' ? (
@@ -431,7 +422,7 @@ function RecipeDetailModal({
                   />
                 ) : null
               }
-              label="Aceite"
+              label="Oil"
               value={oilLabel(recipe)}
             />
           </div>
@@ -439,17 +430,17 @@ function RecipeDetailModal({
             <div className="grid gap-2 rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-sm text-zinc-600">
               <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-amber-900">
                 <p className="font-semibold">
-                  Puede estar contando aceite dos veces.
+                  Oil may be counted twice.
                 </p>
                 <p className="mt-1 text-xs leading-5">
-                  Si ya metes aceite como ingrediente, deja el ajuste de aceite
-                  en &quot;Sin aceite&quot;.
+                  If oil is already an ingredient, set the oil adjustment to
+                  &quot;No oil&quot;.
                 </p>
               </div>
             </div>
           ) : null}
           <div>
-            <p className="text-sm font-semibold">Ingredientes</p>
+            <p className="text-sm font-semibold">Ingredients</p>
             <div className="mt-2 grid gap-2">
               {recipe.ingredients.length > 0 ? (
                 recipe.ingredients.map((ingredient) => {
@@ -466,13 +457,13 @@ function RecipeDetailModal({
                       quantity={ingredient.quantity}
                       categoryIndex={category?.index}
                       categoryName={category?.name}
-                      fallbackName="Ingrediente no encontrado"
+                      fallbackName="Ingredient not found"
                     />
                   );
                 })
               ) : (
                 <p className="rounded-md border border-dashed border-zinc-200 p-4 text-sm text-zinc-500">
-                  Sin ingredientes.
+                  No ingredients.
                 </p>
               )}
             </div>
@@ -482,12 +473,12 @@ function RecipeDetailModal({
               className="text-sm font-semibold underline"
               href={recipe.imageUrl}
             >
-              Ver imagen
+              View image
             </a>
           ) : null}
           <div className="flex flex-wrap gap-2 border-t border-zinc-100 pt-4">
             <Link
-              aria-label={`Editar ${recipe.title}`}
+              aria-label={`Edit ${recipe.title}`}
               className={editIconButtonClassName}
               href={recipeEditHref(recipe.id, query, actingUserId)}
             >
@@ -535,7 +526,7 @@ function RecipeIngredientDetailRow({
               </span>
               <RecipeCategoryPill
                 index={categoryIndex ?? 0}
-                label={categoryName ?? 'Sin etiqueta'}
+                label={categoryName ?? 'No tag'}
               />
             </>
           ) : null}
@@ -562,11 +553,11 @@ function MacroSummary({ recipe }: { recipe: ChopItRecipe }) {
     <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
       <Metric
         label="Kcal"
-        value={`${round(recipe.perServingKcal)} kcal/racion`}
+        value={`${round(recipe.perServingKcal)} kcal/serving`}
       />
       <Metric label="Prot." value={`${round(recipe.perServingProtein)} g`} />
-      <Metric label="Grasa" value={`${round(recipe.perServingFat)} g`} />
-      <Metric label="Hidr." value={`${round(recipe.perServingCarbs)} g`} />
+      <Metric label="Fat" value={`${round(recipe.perServingFat)} g`} />
+      <Metric label="Carbs" value={`${round(recipe.perServingCarbs)} g`} />
     </div>
   );
 }
@@ -646,12 +637,12 @@ function DetailItem({
 
 function macroTagLabel(tag: ChopItIngredient['primaryMacroTag']): string {
   if (tag === 'protein') {
-    return 'Proteina';
+    return 'Protein';
   }
   if (tag === 'fat') {
-    return 'Grasa';
+    return 'Fat';
   }
-  return 'Hidrato';
+  return 'Carbs';
 }
 
 function tagPillClassName(tag: ChopItIngredient['primaryMacroTag']): string {
@@ -694,7 +685,7 @@ function oilLabel(recipe: ChopItRecipe): string {
   if (recipe.oilMode === 'grams') {
     return `${recipe.oilGrams ?? 0} g`;
   }
-  return 'Sin aceite';
+  return 'No oil';
 }
 
 type RecipeSort = 'creator' | '';
@@ -737,7 +728,7 @@ function recipeHasOilDuplicationRisk(
   return recipe.ingredients.some((recipeIngredient) => {
     const ingredient = ingredientById.get(recipeIngredient.ingredientId);
     return ingredient
-      ? normalizeSearchText(ingredient.name).includes('aceite')
+      ? normalizeSearchText(ingredient.name).includes('oil')
       : false;
   });
 }
@@ -757,14 +748,14 @@ function ArchivedRecipesModal({
         <div className="flex items-start justify-between gap-4 border-b border-zinc-100 p-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">
-              Archivo
+              Archive
             </p>
             <h2 className="mt-1 text-xl font-semibold tracking-tight">
-              Recetas archivadas
+              Archived recipes
             </h2>
           </div>
           <Link
-            aria-label="Cerrar"
+            aria-label="Close"
             className={modalCloseClassName}
             href={recipesHref(query, actingUserId)}
           >
@@ -783,32 +774,32 @@ function ArchivedRecipesModal({
                 <div>
                   <p className="text-sm font-semibold">{recipe.title}</p>
                   <p className="mt-1 text-xs text-zinc-500">
-                    {round(recipe.perServingKcal)} kcal/racion
+                    {round(recipe.perServingKcal)} kcal/serving
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <button
-                    aria-label={`Restaurar ${recipe.title}`}
+                    aria-label={`Restore ${recipe.title}`}
                     className={secondaryButtonClassName}
                   >
-                    Restaurar
+                    Restore
                   </button>
                   <button
-                    aria-label={`Borrar definitivamente ${recipe.title}`}
+                    aria-label={`Delete ${recipe.title} permanently`}
                     className={dangerButtonClassName}
                     formAction={deleteRecipePermanentlyAction}
                   >
-                    Borrar
+                    Delete
                   </button>
                 </div>
               </form>
             ))
           ) : (
             <div className="rounded-lg border border-dashed border-zinc-300 px-5 py-10 text-center">
-              <p className="text-sm font-semibold">Sin recetas archivadas</p>
+              <p className="text-sm font-semibold">No archived recipes</p>
               <p className="mt-2 text-sm text-zinc-500">
-                Las recetas archivadas apareceran aqui cuando las ocultes del
-                catalogo.
+                Archived recipes will appear here after you hide them from the
+                catalog.
               </p>
             </div>
           )}
@@ -821,9 +812,9 @@ function ArchivedRecipesModal({
 function EmptyState() {
   return (
     <div className="rounded-lg border border-dashed border-zinc-300 px-5 py-12 text-center">
-      <p className="text-sm font-semibold">Sin recetas</p>
+      <p className="text-sm font-semibold">No recipes</p>
       <p className="mt-2 text-sm text-zinc-500">
-        Crea la primera receta para empezar a planificar la semana.
+        Create your first recipe to start planning the week.
       </p>
     </div>
   );

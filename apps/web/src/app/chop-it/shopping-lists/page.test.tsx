@@ -26,8 +26,8 @@ describe('ChopItShoppingListsPage', () => {
     render(await ChopItShoppingListsPage({}));
 
     expect(
-      screen.getByRole('heading', { name: 'Lista de la compra' }),
+      screen.getByRole('heading', { name: 'Shopping list' }),
     ).toBeInTheDocument();
-    expect(screen.getByText('Sin lista actual')).toBeInTheDocument();
+    expect(screen.getByText('No current list')).toBeInTheDocument();
   });
 });

@@ -44,9 +44,9 @@ export function RecipeExclusionControl({
   return (
     <div className="grid gap-2 sm:min-w-52">
       <label className="inline-flex cursor-pointer items-center justify-end gap-2 text-xs font-semibold text-zinc-600">
-        <span>No contar</span>
+        <span>Exclude</span>
         <input
-          aria-label={`No contar ${recipeTitle}`}
+          aria-label={`Exclude ${recipeTitle}`}
           checked={checked}
           className="peer sr-only"
           name="excludedPlanItemId"
@@ -66,10 +66,10 @@ export function RecipeExclusionControl({
       </label>
       {checked ? (
         <label className="grid gap-1 text-xs font-semibold text-zinc-500">
-          <span>Raciones a no contar</span>
+          <span>Servings to exclude</span>
           <span className="grid grid-cols-[1fr_auto] items-center gap-2">
             <input
-              aria-label={`Raciones a no contar de ${recipeTitle}`}
+              aria-label={`Servings of ${recipeTitle} to exclude`}
               className="h-10 w-full rounded-md border border-zinc-200 px-3 text-base font-semibold text-zinc-950 tabular-nums disabled:bg-zinc-50 disabled:text-zinc-500"
               max={maxServings}
               min={1}
@@ -85,11 +85,11 @@ export function RecipeExclusionControl({
               value={hasMultipleServings ? round(visibleExcludedServings) : 1}
             />
             <span className="whitespace-nowrap text-zinc-400">
-              de {round(maxServings)}
+              of {round(maxServings)}
             </span>
           </span>
           <span className="text-[0.68rem] font-medium text-zinc-400">
-            Se cuentan {round(includedServings)}.
+            {round(includedServings)} included.
           </span>
         </label>
       ) : null}

@@ -10,15 +10,15 @@ export function IngredientFilters({
       {actingUserId ? (
         <input name="actingUserId" type="hidden" value={actingUserId} />
       ) : null}
-      <Field label="Buscar">
+      <Field label="Search">
         <input
           className={inputClassName}
           defaultValue={query}
           name="q"
-          placeholder="Pollo, carne..."
+          placeholder="Chicken, grains..."
         />
       </Field>
-      <button className={primaryButtonClassName}>Filtrar</button>
+      <button className={primaryButtonClassName}>Filter</button>
     </form>
   );
 }
